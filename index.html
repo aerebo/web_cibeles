@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logia Cibeles 176 — Masonería Peruana</title>
-<meta name="description" content="Conoce la masonería en el Perú. La Logia Cibeles 176 abre sus puertas a personas íntegras que buscan crecimiento personal, fraternidad y propósito.">
+<title>R∴L∴S∴ Cibeles N° 176 — Masonería Peruana</title>
+<meta name="description" content="Conoce la masonería en el Perú. La R∴L∴S∴ Cibeles N° 176, fundada en 2009 en el Valle de Lima, abre sus puertas a personas íntegras que buscan crecimiento personal, fraternidad y propósito.">
 <style>
   :root{
     --vino:#5e0f22;
@@ -13,45 +13,123 @@
     --vino-claro:#9c2743;
     --dorado:#c9a227;
     --dorado-claro:#e6c65c;
-    --crema:#faf7f3;
-    --gris:#6b6560;
-    --tinta:#2b1218;
-    --blanco:#ffffff;
+    --crema:#e8ded2;
+    --pergamino:#f4eee4;
+    --gris:#57504b;
+    --tinta:#241016;
+    --blanco:#f4eee4;
+    --sombra:rgba(28,6,14,.16);
     --ease:cubic-bezier(.16,1,.3,1);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{font-family:'Georgia','Times New Roman',serif;color:var(--tinta);background:var(--crema);line-height:1.7;-webkit-font-smoothing:antialiased}
+  body{overflow-x:clip;font-family:'Georgia','Times New Roman',serif;color:var(--tinta);background:var(--crema);line-height:1.7;-webkit-font-smoothing:antialiased}
   h1,h2,h3{font-weight:700;line-height:1.15;letter-spacing:-.01em}
   .sans{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
   .container{max-width:1100px;margin:0 auto;padding:0 24px}
 
   /* ===== Reveal animations (Apple-style) ===== */
-  .reveal{opacity:0;transform:translateY(36px);transition:opacity .9s var(--ease), transform .9s var(--ease)}
-  .reveal.visible{opacity:1;transform:none}
+  .reveal{opacity:0;transform:translateY(36px);filter:blur(9px);transition:opacity 1s var(--ease), transform 1s var(--ease), filter 1s var(--ease)}
+  .reveal.visible{opacity:1;transform:none;filter:blur(0)}
   .reveal.d1{transition-delay:.08s}
   .reveal.d2{transition-delay:.18s}
   .reveal.d3{transition-delay:.28s}
-  .reveal-scale{opacity:0;transform:scale(.94);transition:opacity 1s var(--ease), transform 1s var(--ease)}
-  .reveal-scale.visible{opacity:1;transform:none}
+  .reveal-scale{opacity:0;transform:scale(.94);filter:blur(12px);transition:opacity 1.1s var(--ease), transform 1.1s var(--ease), filter 1.1s var(--ease)}
+  .reveal-scale.visible{opacity:1;transform:none;filter:blur(0)}
+  .reveal.d4{transition-delay:.38s}
+  .reveal.left{transform:translateX(-22px)}
+  .reveal.left.visible{transform:none}
+  .reveal.right{transform:translateX(22px)}
+  .reveal.right.visible{transform:none}
   @media(prefers-reduced-motion:reduce){
     .reveal,.reveal-scale{opacity:1!important;transform:none!important;transition:none!important}
     html{scroll-behavior:auto}
+    .hero{transform:none!important;opacity:1!important}
+    .hero .emblem svg,.scroll-hint{animation:none!important}
+    .hero .emblem::before{animation:none!important;opacity:.85}
+    .reveal,.reveal-scale{filter:none!important}
+    .btn-gold::before{display:none}
   }
+
+  /* ===== Penumbra: viñeta y luz de vela ===== */
+  header,section{position:relative}
+  header::before,section::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0}
+  header::before{background:radial-gradient(ellipse at 50% 40%, transparent 26%, rgba(12,2,6,.66) 100%)}
+  .dark::before{background:radial-gradient(ellipse at 50% 45%, transparent 32%, rgba(12,2,6,.55) 100%)}
+  section:not(.dark)::before{background:radial-gradient(ellipse at 50% 46%, transparent 42%, rgba(48,20,12,.2) 100%)}
+  header > *,section > *{position:relative;z-index:1}
+  footer{position:relative}
+  footer::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 0%, rgba(201,162,39,.1), transparent 62%)}
+  footer > *{position:relative}
+
+  /* la llama detrás del emblema */
+  .hero .emblem{position:relative}
+  .hero .emblem::before{content:"";position:absolute;left:50%;top:50%;width:118%;height:118%;z-index:-1;pointer-events:none;
+    background:radial-gradient(circle, rgba(230,198,92,.3), rgba(230,198,92,.07) 42%, transparent 70%);
+    animation:vela 5.5s ease-in-out 1.4s infinite}
+  @keyframes vela{
+    0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}
+    38%{opacity:1;transform:translate(-50%,-50%) scale(1.14)}
+    62%{opacity:.82;transform:translate(-50%,-50%) scale(1.05)}
+  }
+
+  /* ===== Elementos formales ===== */
+  .invocacion{font-family:'Georgia','Times New Roman',serif;font-weight:700;color:var(--dorado-claro);
+    letter-spacing:.16em;font-size:clamp(.8rem,1.5vw,1rem);white-space:nowrap}
+  .hero .invocacion{margin-bottom:26px;animation:heroFade 1.2s var(--ease) both}
+  footer .invocacion{margin-bottom:20px;color:var(--dorado);opacity:.85}
+  .denominacion{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:var(--dorado-claro);
+    letter-spacing:.14em;text-transform:uppercase;font-size:.72rem;margin:-8px 0 26px;
+    animation:heroFade 1.2s var(--ease) .26s both}
+  .logo .sigla{opacity:.75;font-size:.82em;letter-spacing:.06em}
+  .pilares{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .pilares .card{padding:26px 24px;border-top-width:2px}
+  .pilares .card h3{font-size:1.02rem;margin-bottom:8px}
+  .pilares .card p{font-size:.9rem}
+  .pilares.tres{grid-template-columns:1fr;gap:14px}
+  .pilares-label{color:var(--vino-claro);letter-spacing:.28em;text-transform:uppercase;font-size:.76rem;margin-bottom:16px}
+  @media(max-width:820px){
+    /* en pantallas angostas el desplazamiento lateral sobra y genera scroll horizontal */
+    .reveal.left,.reveal.right{transform:translateY(30px)}
+    .reveal{filter:blur(6px)}
+    .reveal-scale{filter:blur(8px)}
+    .hero .emblem::before{width:126%;height:126%}
+    .pilares{grid-template-columns:1fr}
+    .invocacion{font-size:.76rem;letter-spacing:.1em}
+    .logo .sigla{display:none}
+  }
+
+  /* Con siete enlaces la barra ya no cabe en tabletas: menú hamburguesa hasta 1100px */
+  @media(max-width:1100px){
+    .nav-links{position:fixed;top:54px;right:-100%;flex-direction:column;background:var(--vino-oscuro);width:72%;max-width:300px;height:100vh;padding:38px 28px;gap:24px;transition:right .45s var(--ease);align-items:flex-start}
+    .nav-links.open{right:0}
+    .burger{display:block}
+  }
+
+  /* ===== Barra de progreso de lectura ===== */
+  .progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:110;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--dorado),var(--dorado-claro));will-change:transform}
 
   /* ===== NAV ===== */
   nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(63,9,22,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);transition:background .4s var(--ease), box-shadow .4s var(--ease)}
   nav.scrolled{background:rgba(63,9,22,.92);box-shadow:0 1px 0 rgba(255,255,255,.08),0 8px 30px rgba(0,0,0,.25)}
   .nav-inner{max-width:1100px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between}
-  .logo{color:var(--dorado-claro);font-size:1.05rem;letter-spacing:.1em;text-decoration:none;display:flex;align-items:center;gap:10px;transition:opacity .3s}
+  .logo{color:var(--dorado-claro);font-size:1.05rem;white-space:nowrap;letter-spacing:.1em;text-decoration:none;display:flex;align-items:center;gap:10px;transition:opacity .3s}
   .logo:hover{opacity:.85}
-  .nav-links{display:flex;gap:26px;list-style:none;align-items:center}
+  .nav-links{display:flex;gap:20px;list-style:none;align-items:center;white-space:nowrap}
   .nav-links a{color:#f2e4e0;text-decoration:none;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;transition:color .25s}
   .nav-links a:hover{color:var(--dorado-claro)}
+  .nav-links a:not(.nav-cta){position:relative}
+  .nav-links a:not(.nav-cta)::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:1px;background:var(--dorado-claro);transform:scaleX(0);transform-origin:100% 50%;transition:transform .4s var(--ease)}
+  .nav-links a:not(.nav-cta):hover::after,.nav-links a:not(.nav-cta).active::after{transform:scaleX(1);transform-origin:0 50%}
+  .nav-links a.active{color:var(--dorado-claro)}
   .nav-cta{background:var(--dorado);color:var(--vino-oscuro)!important;padding:8px 18px;border-radius:980px;font-weight:600;transition:transform .3s var(--ease), background .3s!important}
   .nav-cta:hover{background:var(--dorado-claro);transform:scale(1.04)}
   .burger{display:none;background:none;border:none;cursor:pointer;padding:6px}
-  .burger span{display:block;width:24px;height:2px;background:var(--dorado-claro);margin:5px 0;transition:.3s}
+  .burger span{display:block;width:24px;height:2px;background:var(--dorado-claro);margin:5px 0;transition:transform .38s var(--ease), opacity .22s}
+  .burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .burger.open span:nth-child(2){opacity:0;transform:scaleX(.3)}
+  .burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
   /* ===== HERO ===== */
   header{min-height:100vh;display:flex;align-items:center;background:
@@ -59,20 +137,32 @@
     radial-gradient(ellipse at 15% 90%, rgba(156,39,67,.35), transparent 55%),
     linear-gradient(165deg, var(--vino-oscuro) 0%, var(--vino) 55%, var(--vino-medio) 100%);
     color:var(--blanco);position:relative;overflow:hidden}
-  header::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.045) 1px, transparent 1px);background-size:28px 28px;pointer-events:none}
-  .hero{position:relative;z-index:1;padding:150px 0 90px;text-align:center;max-width:860px;margin:0 auto}
-  .hero .emblem{margin-bottom:30px;animation:heroFade 1.2s var(--ease) both}
-  .hero .kicker{color:var(--dorado-claro);letter-spacing:.32em;text-transform:uppercase;font-size:.78rem;margin-bottom:20px;animation:heroFade 1.2s var(--ease) .1s both}
+  header::after{content:"";position:absolute;inset:-10% 0;background-image:radial-gradient(rgba(255,255,255,.045) 1px, transparent 1px);background-size:28px 28px;pointer-events:none;
+    transform:translate3d(0,var(--pattern,0px),0);will-change:transform}
+  .hero{position:relative;z-index:1;padding:124px 0 72px;text-align:center;max-width:860px;margin:0 auto;
+    transform:translate3d(0,var(--py,0px),0);opacity:var(--po,1);will-change:transform,opacity}
+  .hero .emblem{position:relative;width:min(252px,58vw);height:min(252px,58vw);margin:0 auto 18px;
+    animation:heroFade 1.2s var(--ease) .06s both}
+  .hero .emblem .poster{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    transition:opacity .9s var(--ease)}
+  .hero .emblem .poster svg{width:44%;height:auto;animation:emblemFloat 6.5s ease-in-out 1.8s infinite}
+  .hero .emblem canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;display:none}
+  .hero .emblem canvas.activo{display:block}
+  @keyframes emblemFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .hero .kicker{color:var(--dorado-claro);letter-spacing:.32em;text-transform:uppercase;font-size:.78rem;margin-bottom:20px;animation:heroFade 1.2s var(--ease) .14s both}
   .hero h1{font-size:clamp(2.6rem,7vw,4.6rem);margin-bottom:24px;animation:heroFade 1.2s var(--ease) .2s both}
-  .hero p.lead{font-size:clamp(1.05rem,2vw,1.3rem);color:#f0dcd6;max-width:640px;margin:0 auto 42px;animation:heroFade 1.2s var(--ease) .32s both}
-  .hero .actions{animation:heroFade 1.2s var(--ease) .45s both}
+  .hero p.lead{font-size:clamp(1.05rem,2vw,1.3rem);color:#f0dcd6;max-width:640px;margin:0 auto 42px;animation:heroFade 1.2s var(--ease) .36s both}
+  .hero .actions{animation:heroFade 1.2s var(--ease) .5s both;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px}
   @keyframes heroFade{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-  .btn{display:inline-block;padding:15px 38px;border-radius:980px;text-decoration:none;font-size:1rem;letter-spacing:.03em;transition:transform .35s var(--ease), box-shadow .35s var(--ease), background .3s, color .3s}
-  .btn-gold{background:var(--dorado);color:var(--vino-oscuro);font-weight:700;box-shadow:0 8px 28px rgba(201,162,39,.35)}
+  .btn{display:inline-block;vertical-align:middle;border:1px solid transparent;padding:15px 38px;border-radius:980px;text-decoration:none;font-size:1rem;letter-spacing:.03em;transition:transform .35s var(--ease), box-shadow .35s var(--ease), background .3s, color .3s}
+  .btn-gold{background:var(--dorado);color:var(--vino-oscuro);font-weight:700;box-shadow:0 8px 28px rgba(201,162,39,.35);position:relative;overflow:hidden;isolation:isolate}
+  .btn-gold::before{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;z-index:-1;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-18deg);transition:left .75s var(--ease)}
+  .btn-gold:hover::before{left:150%}
   .btn-gold:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 14px 36px rgba(201,162,39,.5)}
-  .btn-ghost{border:1px solid rgba(255,255,255,.45);color:var(--blanco);margin-left:12px}
+  .btn-ghost{border-color:rgba(255,255,255,.45);color:var(--blanco)}
   .btn-ghost:hover{border-color:var(--dorado-claro);color:var(--dorado-claro);transform:translateY(-2px)}
-  .scroll-hint{margin-top:60px;opacity:.5;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;animation:heroFade 1.2s var(--ease) .6s both, bob 2.4s ease-in-out 1.8s infinite}
+  .scroll-hint{margin-top:44px;opacity:.5;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;animation:heroFade 1.2s var(--ease) .6s both, bob 2.4s ease-in-out 1.8s infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
 
   /* ===== SECTIONS ===== */
@@ -84,21 +174,26 @@
   .section-title .rule{width:60px;height:2px;background:var(--dorado);margin:22px auto 0}
 
   .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
-  .two-col p{margin-bottom:16px;color:#4a3f42;font-size:1.04rem}
+  .two-col p{margin-bottom:16px;color:#3f3236;font-size:1.04rem}
   .quote-card{background:linear-gradient(150deg,var(--vino-oscuro),var(--vino));color:var(--crema);padding:44px;border-radius:18px;border-top:4px solid var(--dorado);font-style:italic;font-size:1.15rem;box-shadow:0 24px 60px rgba(94,15,34,.25)}
   .quote-card cite{display:block;margin-top:20px;font-style:normal;color:var(--dorado-claro);font-size:.9rem;letter-spacing:.05em}
 
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
-  .card{background:var(--blanco);border-radius:18px;padding:38px 30px;box-shadow:0 6px 30px rgba(63,9,22,.08);border-top:3px solid var(--dorado);transition:transform .5s var(--ease), box-shadow .5s var(--ease)}
-  .card:hover{transform:translateY(-6px);box-shadow:0 18px 44px rgba(63,9,22,.16)}
-  .card .num{font-size:2.1rem;color:var(--vino-claro);font-weight:700;margin-bottom:12px}
+  .card{background:var(--blanco);border-radius:18px;padding:38px 30px;box-shadow:0 8px 34px var(--sombra);border-top:3px solid var(--dorado);transition:transform .5s var(--ease), box-shadow .5s var(--ease)}
+  .card:hover{transform:translateY(-8px);box-shadow:0 26px 56px rgba(28,6,14,.3)}
+  .card .num{font-size:2.1rem;color:var(--vino-claro);font-weight:700;margin-bottom:12px;transition:transform .55s var(--ease), color .4s}
+  .card:hover .num{transform:translateX(5px);color:var(--vino)}
+  .card h3{transition:color .35s}
   .card h3{font-size:1.15rem;margin-bottom:12px;color:var(--vino)}
   .card p{color:var(--gris);font-size:.95rem}
 
   .steps{max-width:720px;margin:0 auto}
   .step{display:flex;gap:24px;padding:28px 0;border-bottom:1px solid rgba(255,255,255,.14)}
   .step:last-child{border-bottom:none}
-  .step .marker{flex-shrink:0;width:46px;height:46px;border-radius:50%;background:var(--dorado);color:var(--vino-oscuro);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:Arial,sans-serif;font-size:1.05rem}
+  .step{transition:padding-left .5s var(--ease)}
+  .step:hover{padding-left:10px}
+  .step .marker{flex-shrink:0;width:46px;height:46px;border-radius:50%;background:var(--dorado);color:var(--vino-oscuro);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:Arial,sans-serif;font-size:1.05rem;transition:transform .5s var(--ease), box-shadow .5s var(--ease)}
+  .step:hover .marker{transform:scale(1.1) rotate(-6deg);box-shadow:0 10px 26px rgba(201,162,39,.45)}
   .step h3{font-size:1.1rem;margin-bottom:6px;color:var(--dorado-claro)}
   .step p{color:#eedcd6;font-size:.97rem}
 
@@ -109,24 +204,33 @@
   .dark .card h3{color:var(--dorado-claro)}
   .dark .card p{color:#e9d3cd}
   .dark .card .num{color:var(--dorado)}
+  .dark .card:hover .num{color:var(--dorado-claro)}
 
   /* ===== FAQ ===== */
-  details{background:var(--blanco);border-radius:14px;margin-bottom:14px;box-shadow:0 3px 16px rgba(63,9,22,.07);overflow:hidden;transition:box-shadow .4s var(--ease)}
+  details{background:var(--blanco);border-radius:14px;margin-bottom:14px;box-shadow:0 4px 20px var(--sombra);overflow:hidden;transition:box-shadow .4s var(--ease)}
   details:hover{box-shadow:0 8px 26px rgba(63,9,22,.12)}
   summary{cursor:pointer;padding:22px 26px;font-weight:700;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--vino)}
   summary::-webkit-details-marker{display:none}
   summary::after{content:"+";color:var(--dorado);font-size:1.5rem;font-family:Arial;transition:transform .35s var(--ease)}
   details[open] summary::after{transform:rotate(45deg)}
-  details .answer{padding:0 26px 24px;color:var(--gris);font-size:.97rem}
+  details .answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+  details.is-open .answer{grid-template-rows:1fr}
+  details .answer > .answer-in{overflow:hidden;min-height:0}
+  details .answer > .answer-in > p{padding:0 26px 24px;color:var(--gris);font-size:.97rem;opacity:0;transform:translateY(-6px);transition:opacity .4s var(--ease) .1s, transform .4s var(--ease) .1s}
+  details.is-open .answer > .answer-in > p{opacity:1;transform:none}
+  summary{transition:color .3s}
+  summary:hover{color:var(--vino-claro)}
 
   /* ===== FORM ===== */
-  .form-wrap{max-width:640px;margin:0 auto;background:var(--blanco);border-radius:22px;padding:48px;box-shadow:0 20px 60px rgba(63,9,22,.14)}
+  .form-wrap{max-width:640px;margin:0 auto;background:var(--pergamino);border-radius:22px;padding:48px;box-shadow:0 24px 70px rgba(28,6,14,.28)}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .field{display:flex;flex-direction:column}
   .field.full{grid-column:1/-1}
   label{font-family:Arial,sans-serif;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);margin-bottom:7px}
-  input,textarea{font-family:Georgia,serif;font-size:1rem;padding:14px 15px;border:1px solid #e2d6d0;border-radius:10px;background:#fdfbf9;color:var(--tinta);transition:border .25s, box-shadow .25s}
+  input,textarea{font-family:Georgia,serif;font-size:1rem;padding:14px 15px;border:1px solid #d8c9bd;border-radius:10px;background:#fbf7f1;color:var(--tinta);transition:border .25s, box-shadow .25s}
   input:focus,textarea:focus{outline:none;border-color:var(--vino-claro);box-shadow:0 0 0 4px rgba(156,39,67,.1)}
+  .field label{transition:color .3s}
+  .field:focus-within label{color:var(--vino-claro)}
   textarea{resize:vertical;min-height:110px}
   .submit-btn{width:100%;margin-top:26px;padding:17px;background:var(--vino);color:var(--dorado-claro);border:none;border-radius:980px;font-size:1.05rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:background .3s, transform .35s var(--ease), box-shadow .35s var(--ease)}
   .submit-btn:hover{background:var(--vino-medio);transform:translateY(-2px);box-shadow:0 12px 30px rgba(94,15,34,.3)}
@@ -134,25 +238,51 @@
   .form-msg{margin-top:18px;padding:14px;border-radius:10px;font-size:.95rem;display:none;text-align:center}
   .form-msg.ok{display:block;background:#eef6ec;color:#276b2e;border:1px solid #c5e2c3}
   .form-msg.err{display:block;background:#fdeeee;color:#a33;border:1px solid #f0c8c8}
+  .form-msg.ok,.form-msg.err{animation:msgIn .5s var(--ease) both}
+  @keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .submit-btn.loading{position:relative;color:transparent}
+  .submit-btn.loading::after{content:"";position:absolute;top:50%;left:50%;width:19px;height:19px;margin:-10px 0 0 -10px;
+    border:2px solid rgba(230,198,92,.35);border-top-color:var(--dorado-claro);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
   .privacy{margin-top:16px;font-size:.8rem;color:var(--gris);text-align:center}
 
   footer{background:var(--vino-oscuro);color:#caa8ad;padding:52px 0;text-align:center;font-size:.88rem}
   footer .foot-logo{color:var(--dorado);font-size:1.05rem;letter-spacing:.12em;margin-bottom:10px}
 
   @media(max-width:820px){
-    .nav-links{position:fixed;top:54px;right:-100%;flex-direction:column;background:var(--vino-oscuro);width:72%;max-width:300px;height:100vh;padding:38px 28px;gap:24px;transition:right .45s var(--ease);align-items:flex-start}
-    .nav-links.open{right:0}
-    .burger{display:block}
+    /* El emblema no puede empujar el botón principal fuera de la primera
+       pantalla. Además los dos botones caben en una sola fila si se les
+       recorta el acolchado, y eso ahorra una franja entera. */
+    .hero{padding:84px 0 62px}
+    .hero .emblem{width:min(176px,43vw);height:min(176px,43vw);margin-bottom:10px}
+    .hero .kicker{margin-bottom:14px}
+    .hero h1{margin-bottom:14px}
+    .denominacion{margin:-4px 0 18px}
+    .hero p.lead{margin-bottom:24px}
+    .hero .actions{gap:10px}
+    .hero .actions .btn{padding:13px 22px;font-size:.94rem}
+    .scroll-hint{margin-top:34px}
     .two-col{grid-template-columns:1fr;gap:38px}
     .cards{grid-template-columns:1fr}
     .form-grid{grid-template-columns:1fr}
     .form-wrap{padding:34px 22px}
-    .btn-ghost{margin-left:0;margin-top:14px}
     section{padding:72px 0}
+  }
+
+  /* Portátiles de pantalla baja (13", 1280x800 y parecidos): el escenario 3D
+     no puede dejar el botón principal debajo del pliegue. */
+  @media(min-width:821px) and (max-height:880px){
+    .hero{padding:100px 0 54px}
+    .hero .emblem{width:min(196px,44vw);height:min(196px,44vw);margin-bottom:14px}
+    .hero .kicker{margin-bottom:14px}
+    .hero p.lead{margin-bottom:30px}
+    .scroll-hint{margin-top:28px}
   }
 </style>
 </head>
 <body>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
 
 <nav id="nav">
   <div class="nav-inner">
@@ -162,15 +292,16 @@
         <path d="M50 92 L12 38 L22 38 L50 78 L78 38 L88 38 Z" fill="none" stroke="#c9a227" stroke-width="5"/>
         <circle cx="50" cy="50" r="5" fill="#e6c65c"/>
       </svg>
-      CIBELES 176
+      <span class="sigla">R∴L∴S∴</span>&nbsp;CIBELES 176
     </a>
-    <button class="burger" aria-label="Menú" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+    <button class="burger" id="burger" aria-label="Menú" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links sans">
       <li><a href="#masoneria">La Masonería</a></li>
       <li><a href="#peru">En el Perú</a></li>
-      <li><a href="#logia">Nuestra Logia</a></li>
+      <li><a href="#logia">Quiénes Somos</a></li>
+      <li><a href="#viaje">El Viaje</a></li>
       <li><a href="#ingreso">Cómo Ingresar</a></li>
       <li><a href="#faq">Preguntas</a></li>
       <li><a class="nav-cta" href="#contacto">Quiero unirme</a></li>
@@ -181,19 +312,24 @@
 <header id="inicio">
   <div class="container">
     <div class="hero">
-      <div class="emblem">
-        <svg width="76" height="76" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-          <path d="M50 6 L92 64 L80 64 L50 22 L20 64 L8 64 Z" fill="#c9a227"/>
-          <path d="M50 94 L8 36 L20 36 L50 78 L80 36 L92 36 Z" fill="none" stroke="#c9a227" stroke-width="5"/>
-          <circle cx="50" cy="50" r="6" fill="#e6c65c"/>
-        </svg>
+      <p class="invocacion">A∴L∴G∴D∴G∴A∴D∴U∴</p>
+      <div class="emblem" id="emblema">
+        <div class="poster">
+          <svg width="130" height="130" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <path d="M50 6 L92 64 L80 64 L50 22 L20 64 L8 64 Z" fill="#c9a227"/>
+            <path d="M50 94 L8 36 L20 36 L50 78 L80 36 L92 36 Z" fill="none" stroke="#c9a227" stroke-width="5"/>
+            <circle cx="50" cy="50" r="6" fill="#e6c65c"/>
+          </svg>
+        </div>
+        <canvas id="emblema3d" aria-hidden="true"></canvas>
       </div>
       <p class="kicker sans">Masonería Peruana · Lima</p>
       <h1>Cibeles N° 176</h1>
+      <p class="denominacion">Respetable Logia Simbólica · Fundada el 19 de febrero de 2009</p>
       <p class="lead">Una escuela de pensamiento y desarrollo personal con siglos de historia. Personas íntegras trabajando por su crecimiento y por el bien de la sociedad peruana.</p>
       <div class="actions">
-        <a class="btn btn-ghost sans" style="margin-left:0" href="#masoneria">Saber más</a>
-        <a class="btn btn-gold sans" style="margin-left:12px" href="#contacto">Quiero unirme</a>
+        <a class="btn btn-ghost sans" href="#masoneria">Saber más</a>
+        <a class="btn btn-gold sans" href="#contacto">Quiero unirme</a>
       </div>
       <p class="scroll-hint sans">▼ Descubre más</p>
     </div>
@@ -208,7 +344,7 @@
       <div class="rule"></div>
     </div>
     <div class="two-col">
-      <div class="reveal d1">
+      <div class="reveal left d1">
         <p>La Masonería es una institución filosófica, formativa y filantrópica cuyo propósito es el desarrollo ético e intelectual del ser humano. No es una religión ni un partido político: es una escuela de valores donde hombres de distintas creencias y profesiones se reúnen en fraternidad.</p>
         <p>Sus herramientas son los símbolos de los antiguos constructores de catedrales — la escuadra, el compás, la plomada — aplicados a la construcción del propio carácter: tolerancia, justicia, verdad y trabajo.</p>
         <p>Presente en casi todos los países del mundo, ha contado entre sus miembros a científicos, artistas, libertadores y ciudadanos comunes unidos por un mismo ideal de libertad, igualdad y fraternidad.</p>
@@ -240,9 +376,9 @@
         <p>Se constituye la Gran Logia del Perú, institución que agrupa y regula a las logias del país, reconocida por las principales organizaciones masónicas del mundo.</p>
       </div>
       <div class="card reveal d3">
-        <div class="num">Hoy</div>
-        <h3>Una orden vigente</h3>
-        <p>Decenas de logias trabajan activamente en todo el país, aportando a la cultura, la educación y la labor social, fieles a sus valores y tradiciones.</p>
+        <div class="num">2009</div>
+        <h3>Nace Cibeles N° 176</h3>
+        <p>El 19 de febrero de 2009 se funda nuestro taller en el Valle de Lima, sumándose a las decenas de logias que hoy trabajan activamente en todo el país.</p>
       </div>
     </div>
   </div>
@@ -252,19 +388,44 @@
   <div class="container">
     <div class="section-title reveal">
       <span class="over sans">Quiénes somos</span>
-      <h2>Logia Cibeles N° 176</h2>
+      <h2>R∴L∴S∴ Cibeles N° 176</h2>
       <div class="rule"></div>
     </div>
     <div class="two-col">
-      <div class="reveal d1">
-        <p>La Logia Cibeles N° 176 es una institución masónica que se rige por los principios universales de la masonería: fraternidad, ayuda mutua y búsqueda de la verdad.</p>
-        <p>Nuestros miembros provienen de distintas profesiones, edades y trayectorias, unidos por el compromiso de ser mejores personas para sus familias y su comunidad. Nos reunimos periódicamente para estudiar y debatir temas de filosofía, ética, historia y actualidad, siempre en un marco de respeto y tolerancia.</p>
-        <p>Si buscas un espacio de crecimiento personal serio, con historia y con propósito, será un gusto conocerte.</p>
+      <div class="reveal left d1">
+        <p>Cibeles 176 es una logia masónica en el Valle de Lima, Perú, dedicada a los principios atemporales del Amor Fraternal, el Socorro y la Verdad. Buscamos formar mejores hombres a través del compañerismo, la reflexión, el servicio y la búsqueda del conocimiento.</p>
       </div>
-      <div class="cards reveal d2" style="grid-template-columns:1fr;gap:18px">
-        <div class="card"><h3>Fraternidad</h3><p>Un vínculo que trasciende diferencias sociales, religiosas y políticas.</p></div>
-        <div class="card"><h3>Formación</h3><p>Estudio del simbolismo, la filosofía y la historia como camino de superación.</p></div>
-        <div class="card"><h3>Filantropía</h3><p>Trabajo silencioso y constante por quienes más lo necesitan.</p></div>
+      <div class="reveal right d2">
+        <p class="pilares-label sans">Nuestros principios</p>
+        <div class="pilares tres">
+          <div class="card"><h3>Amor Fraternal</h3><p>El lazo que nos une como Hermanos.</p></div>
+          <div class="card"><h3>Socorro</h3><p>Servicio a los demás y cuidado de quienes lo necesitan.</p></div>
+          <div class="card"><h3>Verdad</h3><p>La búsqueda constante de conocimiento, integridad y Luz.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="viaje" class="dark">
+  <div class="container">
+    <div class="section-title reveal">
+      <span class="over sans">El viaje masónico</span>
+      <h2>Autodescubrimiento, compañerismo y búsqueda de la Luz</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="cards">
+      <div class="card reveal d1">
+        <h3>Conocimiento</h3>
+        <p>Una búsqueda constante de sabiduría, comprensión y verdad.</p>
+      </div>
+      <div class="card reveal d2">
+        <h3>Carácter</h3>
+        <p>Formar mejores hombres a través de la virtud, la integridad y la autorreflexión.</p>
+      </div>
+      <div class="card reveal d3">
+        <h3>Hermandad</h3>
+        <p>Un lazo atemporal construido sobre la amistad, el respeto y el servicio.</p>
       </div>
     </div>
   </div>
@@ -320,44 +481,45 @@
       <h2>Preguntas Frecuentes</h2>
       <div class="rule"></div>
     </div>
-    <div class="reveal d1">
-      <details>
+    <div class="faq-list">
+      <details class="reveal">
         <summary>¿La masonería es una sociedad secreta?</summary>
-        <div class="answer">No. Es una institución discreta: sus miembros, sedes y autoridades son públicos. Lo reservado son sus ceremonias internas, como ocurre en muchas instituciones tradicionales.</div>
+        <div class="answer"><div class="answer-in"><p>No. Es una institución discreta: sus miembros, sedes y autoridades son públicos. Lo reservado son sus ceremonias internas, como ocurre en muchas instituciones tradicionales.</p></div></div>
       </details>
-      <details>
+      <details class="reveal d1">
         <summary>¿Es una religión o va contra la religión?</summary>
-        <div class="answer">Ninguna de las dos. La masonería pide creer en un principio superior, pero no impone ninguna doctrina. En una misma institución conviven católicos, evangélicos, judíos, musulmanes y librepensadores.</div>
+        <div class="answer"><div class="answer-in"><p>Ninguna de las dos. La masonería pide creer en un principio superior, pero no impone ninguna doctrina. En una misma institución conviven católicos, evangélicos, judíos, musulmanes y librepensadores.</p></div></div>
       </details>
-      <details>
+      <details class="reveal d2">
         <summary>¿Hay que ser rico o influyente para ingresar?</summary>
-        <div class="answer">No. Se valora la calidad humana, no la posición social. Existen aportes regulares que sostienen a la institución y sus obras sociales, accesibles para cualquier profesional o trabajador.</div>
+        <div class="answer"><div class="answer-in"><p>No. Se valora la calidad humana, no la posición social. Existen aportes regulares que sostienen a la institución y sus obras sociales, accesibles para cualquier profesional o trabajador.</p></div></div>
       </details>
-      <details>
+      <details class="reveal d3">
         <summary>¿Cuánto tiempo demanda?</summary>
-        <div class="answer">Las reuniones suelen ser de dos a cuatro veces al mes. La masonería respeta siempre los deberes familiares y laborales, que están primero.</div>
+        <div class="answer"><div class="answer-in"><p>Las reuniones suelen ser de dos a cuatro veces al mes. La masonería respeta siempre los deberes familiares y laborales, que están primero.</p></div></div>
       </details>
-      <details>
+      <details class="reveal d4">
         <summary>¿Pueden ingresar mujeres?</summary>
-        <div class="answer">Las logias tradicionales son masculinas; sin embargo, existen organizaciones femeninas afines con las que se mantienen vínculos cercanos. Escríbenos y te orientamos.</div>
+        <div class="answer"><div class="answer-in"><p>Las logias tradicionales son masculinas; sin embargo, existen organizaciones femeninas afines con las que se mantienen vínculos cercanos. Escríbenos y te orientamos.</p></div></div>
       </details>
     </div>
   </div>
 </section>
 
-<section id="contacto" style="background:#f3ebe4">
+<section id="contacto" style="background:#ddd0c0">
   <div class="container">
     <div class="section-title reveal">
-      <span class="over sans">Primer contacto</span>
-      <h2>¿Interesado? Escríbenos</h2>
+      <span class="over sans">¿Interesado en la masonería?</span>
+      <h2>Únete a Cibeles 176</h2>
       <div class="rule"></div>
-      <p style="margin-top:18px;color:var(--gris)">Déjanos tus datos y un miembro de nuestra institución te contactará con total confidencialidad.</p>
+      <p style="margin-top:18px;color:var(--gris)">La masonería comienza con un simple deseo: convertirse en un hombre mejor.</p>
+      <p style="margin-top:12px;color:var(--gris)">¿Tienes preguntas sobre la Masonería o sobre Cibeles 176? Agradecemos tus preguntas y te invitamos a ponerte en contacto.</p>
     </div>
     <div class="form-wrap reveal-scale d1">
       <form id="leadForm">
         <div class="form-grid">
           <div class="field full">
-            <label for="nombre">Nombre completo *</label>
+            <label for="nombre">Nombre *</label>
             <input type="text" id="nombre" name="nombre" required>
           </div>
           <div class="field">
@@ -365,16 +527,12 @@
             <input type="email" id="correo" name="correo" required>
           </div>
           <div class="field">
-            <label for="telefono">Teléfono / WhatsApp</label>
-            <input type="tel" id="telefono" name="telefono">
+            <label for="telefono">Celular / WhatsApp *</label>
+            <input type="tel" id="telefono" name="telefono" required>
           </div>
           <div class="field full">
-            <label for="ciudad">Ciudad *</label>
-            <input type="text" id="ciudad" name="ciudad" required>
-          </div>
-          <div class="field full">
-            <label for="mensaje">¿Por qué te interesa la masonería?</label>
-            <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos brevemente sobre ti y tu interés..."></textarea>
+            <label for="mensaje">Mensaje *</label>
+            <textarea id="mensaje" name="mensaje" required></textarea>
           </div>
         </div>
         <button type="submit" class="submit-btn sans" id="submitBtn">Enviar solicitud</button>
@@ -387,31 +545,130 @@
 
 <footer>
   <div class="container">
-    <p class="foot-logo sans">LOGIA CIBELES N° 176</p>
-    <p>Lima, Perú · Miembro de la Gran Logia del Perú</p>
-    <p style="margin-top:14px">© <span id="year"></span> Logia Cibeles 176 — Libertad · Igualdad · Fraternidad</p>
+    <p class="invocacion">A∴L∴G∴D∴G∴A∴D∴U∴</p>
+    <p class="foot-logo sans">R∴L∴S∴ CIBELES N° 176</p>
+    <p>Vall∴ de Lima · Ori∴ del Perú · Miembro de la Gran Logia del Perú</p>
+    <p style="opacity:.8">Fundada el 19 de febrero de 2009 (e∴v∴)</p>
+    <p style="margin-top:14px">© <span id="year"></span> R∴L∴S∴ Cibeles N° 176 — Fraternidad, virtud y servicio</p>
   </div>
 </footer>
 
 <script>
+  /* La pieza 3D es un lujo, no un requisito: solo se carga si el equipo la
+     va a disfrutar. Si no, el póster SVG se queda y la página no lo nota. */
+  (function(){
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var red = navigator.connection;
+    if (red && (red.saveData || /(^|-)2g$/.test(red.effectiveType || ''))) return;
+    try {
+      var prueba = document.createElement('canvas');
+      if (!(prueba.getContext('webgl2') || prueba.getContext('webgl'))) return;
+    } catch (e) { return; }
+    var cargar = function(){ import('./hero-emblem.js').catch(function(){}); };
+    addEventListener('load', function(){
+      // después del primer pintado, para no competir con el LCP
+      if (window.requestIdleCallback) requestIdleCallback(cargar, {timeout: 2500});
+      else setTimeout(cargar, 900);
+    });
+  })();
+
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Nav: fondo más sólido al hacer scroll
-  const nav = document.getElementById('nav');
-  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40), {passive:true});
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nav      = document.getElementById('nav');
+  const navList  = document.querySelector('.nav-links');
+  const burger   = document.getElementById('burger');
+  const bar      = document.getElementById('progress');
+  const hero     = document.querySelector('.hero');
+  const headerEl = document.getElementById('inicio');
 
-  // Cierra el menú móvil al hacer clic en un enlace
+  // Menú móvil: burger animado a X
+  burger.addEventListener('click', () => {
+    const open = navList.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open);
+  });
   document.querySelectorAll('.nav-links a').forEach(a =>
-    a.addEventListener('click', () => document.querySelector('.nav-links').classList.remove('open'))
+    a.addEventListener('click', () => {
+      navList.classList.remove('open');
+      burger.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    })
   );
+
+  // Scroll-spy: resalta la sección activa en el menú
+  const spyLinks = [...document.querySelectorAll('.nav-links a[href^="#"]:not(.nav-cta)')];
+  const spyMap = new Map();
+  spyLinks.forEach(a => {
+    const sec = document.querySelector(a.getAttribute('href'));
+    if (sec) spyMap.set(sec, a);
+  });
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        spyLinks.forEach(l => l.classList.remove('active'));
+        spyMap.get(e.target).classList.add('active');
+      }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  spyMap.forEach((_, sec) => spy.observe(sec));
+
+  // Un solo listener de scroll, sincronizado con el repintado
+  let ticking = false;
+  function onScroll(){
+    const y = scrollY;
+    nav.classList.toggle('scrolled', y > 40);
+
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - innerHeight;
+    bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(y / max, 1) : 0) + ')';
+
+    if (!reduce) {
+      const h = headerEl.offsetHeight;
+      const t = Math.min(y / h, 1);
+      hero.style.setProperty('--py', (y * 0.28).toFixed(1) + 'px');
+      hero.style.setProperty('--po', Math.max(1 - t * 1.35, 0).toFixed(3));
+      headerEl.style.setProperty('--pattern', (y * 0.12).toFixed(1) + 'px');
+    }
+    ticking = false;
+  }
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+  }, {passive:true});
+  onScroll();
 
   // Reveal on scroll (estilo Apple)
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+      if (e.isIntersecting) {
+        e.target.style.willChange = 'opacity, transform, filter';
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.reveal, .reveal-scale').forEach(el => io.observe(el));
+  document.querySelectorAll('.reveal, .reveal-scale').forEach(el => {
+    io.observe(el);
+    // el desenfoque es caro: se anuncia antes de animar y se libera al terminar
+    el.addEventListener('transitionend', e => {
+      if (e.propertyName === 'filter') el.style.willChange = 'auto';
+    }, {once:true});
+  });
+
+  // FAQ: acordeón con apertura y cierre animados
+  document.querySelectorAll('#faq details').forEach(d => {
+    d.querySelector('summary').addEventListener('click', e => {
+      if (reduce) { d.classList.toggle('is-open', !d.open); return; }
+      e.preventDefault();
+      if (d.open) {
+        d.classList.remove('is-open');
+        setTimeout(() => { d.open = false; }, 430);
+      } else {
+        d.open = true;
+        requestAnimationFrame(() => d.classList.add('is-open'));
+      }
+    });
+  });
 
   const WEBHOOK_URL = 'https://enriquevega444.app.n8n.cloud/webhook/cibeles-leads';
 
@@ -420,7 +677,7 @@
     const btn = document.getElementById('submitBtn');
     const msg = document.getElementById('formMsg');
     btn.disabled = true;
-    btn.textContent = 'Enviando…';
+    btn.classList.add('loading');
     msg.className = 'form-msg';
 
     const data = Object.fromEntries(new FormData(e.target).entries());
@@ -440,7 +697,7 @@
       msg.classList.add('err');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Enviar solicitud';
+      btn.classList.remove('loading');
     }
   });
 </script>
