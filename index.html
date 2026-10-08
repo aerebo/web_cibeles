@@ -670,7 +670,7 @@
     });
   });
 
-  const WEBHOOK_URL = 'https://enriquevega444.app.n8n.cloud/webhook/cibeles-leads';
+  const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzemgLbM0YyFzJu6wkx75igO5CwEkG9tcS1KqNTeQff9H_IaBCTdk1sEZCzEpdPxVhNFg/exec';
 
   document.getElementById('leadForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -685,7 +685,7 @@
     try {
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(data)
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
