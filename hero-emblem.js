@@ -1,6 +1,12 @@
-/*  Escuadra y compás en oro pulido — R∴L∴S∴ Cibeles N° 176
+/*  Escuadra, compás y G en relieve tallado — R∴L∴S∴ Cibeles N° 176
  *  Se carga de forma diferida y solo si el equipo lo soporta.
- *  Si algo falla, el SVG de póster se queda en su lugar y nadie se entera.        */
+ *  Si algo falla, el SVG de póster se queda en su lugar y nadie se entera.
+ *
+ *  v3 (relieve): la pieza se "talla" en un mapa de alturas pintado por código
+ *  (compás con arista central, escuadra con filete y gallones, campo central con
+ *  roleos vegetales y la G), que desplaza una malla densa y da sus normales.
+ *  La luz rasante barre la talla al aparecer; en reposo la pieza oscila poco y
+ *  sigue al puntero, como una placa colgada.                                   */
 
 import * as THREE from './three.module.min.js';
 
@@ -8,154 +14,269 @@ const canvas = document.getElementById('emblema3d');
 const poster = document.querySelector('.emblem .poster');
 if (!canvas) throw new Error('sin lienzo');
 
-/* En un flujo PBR el color base de un metal ES su reflectancia, no su tinte
-   aparente. El oro físico ronda (1.00, 0.77, 0.34); usar el #c9a227 de la
-   paleta lo apaga hasta parecer bronce sucio. El tono vino de la página
-   vuelve por el entorno, que es lo que la pieza refleja.                    */
-const ORO       = 0xffc85e;
-const ORO_CLARO = 0xffdb92;
+const ORO = 0xffc85e;   // reflectancia del oro (no el #c9a227 de la paleta: lo apaga)
 
 /* ---------- render ---------- */
 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
-renderer.outputColorSpace     = THREE.SRGBColorSpace;
-renderer.toneMapping          = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure  = 0;              // arranca a oscuras: la pieza emerge
+renderer.outputColorSpace    = THREE.SRGBColorSpace;
+renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0;
 
-const escena  = new THREE.Scene();
-const camara  = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+const escena = new THREE.Scene();
+const camara = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
 camara.position.set(0, 0, 7.4);
 
 /* ---------- entorno HDR ----------
-   Un metal no tiene color propio: sólo devuelve lo que hay alrededor. Por eso
-   el realismo se juega aquí y no en las luces. Y tiene que ser HDR: un mapa
-   armado sobre un canvas es LDR, tope 1.0, y sin valores por encima de blanco
-   el oro nunca saca reflejos — se queda en bronce apagado. Esto pinta un
-   recinto en penumbra a mano, en punto flotante, con cirios de intensidad 30–45
-   que son los que trazan el filo brillante al girar la pieza.               */
+   El oro sólo devuelve lo que tiene alrededor y necesita valores por encima de
+   blanco (Float) para brillar. Paneles rectangulares + cirios, sobre penumbra vino. */
 function entorno() {
-  const W = 256, H = 128;
-  const datos = new Float32Array(W * H * 4);
-  const focos = [
-    { x: .27, y: .17, r: .30, c: [1, .94, .82], i: 13 },   // foco principal, alto
-    { x: .70, y: .26, r: .24, c: [1, .80, .52], i: 4.5 },  // segundo foco ámbar
-    { x: .93, y: .44, r: .20, c: [1, .70, .42], i: 2.0 },  // rebote del muro
-    { x: .06, y: .54, r: .22, c: [.9, .42, .52], i: 1.1 }, // rebote del muro opuesto
-    { x: .52, y: .95, r: .34, c: [.8, .24, .34], i: .9 },  // piso vino
-    { x: .18, y: .09, r: .055, c: [1, .97, .90], i: 45 },  // cirios
-    { x: .43, y: .07, r: .045, c: [1, .96, .88], i: 38 },
-    { x: .64, y: .12, r: .050, c: [1, .93, .80], i: 30 },
-    { x: .86, y: .10, r: .040, c: [1, .95, .85], i: 26 },
+  const W = 256, H = 128, d = new Float32Array(W * H * 4);
+  const paneles = [
+    { x: .22, y: .28, w: .05, h: .22, c: [1, .95, .86], i: 9 },
+    { x: .50, y: .10, w: .22, h: .04, c: [1, .93, .80], i: 6 },
+    { x: .78, y: .34, w: .04, h: .18, c: [1, .80, .52], i: 4 },
   ];
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const u = x / W, v = y / H;
-      let r = .014, g = .005, b = .009;                     // penumbra base
-      for (const f of focos) {
-        const dx = Math.abs(u - f.x);
-        const du = Math.min(dx, 1 - dx) * 2;                // la horizontal da la vuelta
-        const d  = Math.hypot(du, v - f.y) / f.r;
-        if (d < 1) { const k = (1 - d) * (1 - d) * f.i; r += f.c[0] * k; g += f.c[1] * k; b += f.c[2] * k; }
-      }
-      const i = (y * W + x) * 4;
-      datos[i] = r; datos[i + 1] = g; datos[i + 2] = b; datos[i + 3] = 1;
+  const focos = [
+    { x: .06, y: .56, r: .22, c: [.9, .42, .52], i: 1.0 },
+    { x: .52, y: .95, r: .34, c: [.8, .24, .34], i: .8 },
+    { x: .18, y: .09, r: .04, c: [1, .97, .90], i: 30 },
+    { x: .64, y: .12, r: .035, c: [1, .93, .80], i: 24 },
+  ];
+  const sm = (a, b, v) => { const t = Math.min(Math.max((v - a) / (b - a), 0), 1); return t * t * (3 - 2 * t); };
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const u = x / W, v = y / H;
+    let r = .02, g = .008, b = .011;
+    for (const p of paneles) {
+      const du = Math.min(Math.abs(u - p.x), 1 - Math.abs(u - p.x));
+      const k = (1 - sm(p.w * .6, p.w, du)) * (1 - sm(p.h * .6, p.h, Math.abs(v - p.y))) * p.i;
+      r += p.c[0] * k; g += p.c[1] * k; b += p.c[2] * k;
     }
+    for (const f of focos) {
+      const du = Math.min(Math.abs(u - f.x), 1 - Math.abs(u - f.x)) * 2;
+      const q = Math.hypot(du, v - f.y) / f.r;
+      if (q < 1) { const k = (1 - q) * (1 - q) * f.i; r += f.c[0] * k; g += f.c[1] * k; b += f.c[2] * k; }
+    }
+    const i = (y * W + x) * 4; d[i] = r; d[i + 1] = g; d[i + 2] = b; d[i + 3] = 1;
   }
-  const t = new THREE.DataTexture(datos, W, H, THREE.RGBAFormat, THREE.FloatType);
-  t.mapping    = THREE.EquirectangularReflectionMapping;
-  t.colorSpace = THREE.LinearSRGBColorSpace;                // ya viene en lineal
-  t.needsUpdate = true;
+  const t = new THREE.DataTexture(d, W, H, THREE.RGBAFormat, THREE.FloatType);
+  t.mapping = THREE.EquirectangularReflectionMapping; t.colorSpace = THREE.LinearSRGBColorSpace; t.needsUpdate = true;
   return t;
 }
 const pmrem = new THREE.PMREMGenerator(renderer);
-const mapa  = pmrem.fromEquirectangular(entorno()).texture;
-escena.environment = mapa;
+escena.environment = pmrem.fromEquirectangular(entorno()).texture;
 pmrem.dispose();
 
-const luzClave = new THREE.DirectionalLight(0xfff1d6, 0.9); luzClave.position.set( 3.2,  4.2,  5.0); escena.add(luzClave);
-const luzBorde = new THREE.DirectionalLight(0xffc768, 0.7); luzBorde.position.set(-4.0, -1.2, -2.6); escena.add(luzBorde);
+/* Luz rasante: la talla se lee por sus sombras. Es la protagonista. */
+const rasante = new THREE.DirectionalLight(0xfff0d8, 2.6); escena.add(rasante); escena.add(rasante.target);
+const relleno = new THREE.DirectionalLight(0xffc27a, 0.45); relleno.position.set(3.5, -2, 3); escena.add(relleno);
 
-/* ---------- materiales ---------- */
-const pulido = new THREE.MeshStandardMaterial({ color: ORO,       metalness: 1, roughness: 0.12, envMapIntensity: 1.0 });
-const satin  = new THREE.MeshStandardMaterial({ color: 0xeaad45,  metalness: 1, roughness: 0.28, envMapIntensity: 0.95 });
-const brillo = new THREE.MeshStandardMaterial({ color: ORO_CLARO, metalness: 1, roughness: 0.06, envMapIntensity: 1.15 });
+/* ---------- talla: mapa de alturas ----------
+   Diseño en un lienzo de 1000 x 1100; el mapa real es más chico (ESC) para que
+   cargue rápido. Cada capa se rasteriza como máscara, se suaviza (bisel) y se
+   suma (relieve) o se resta (grabado) a la altura.                            */
+const DW = 1000, DH = 1100, ESC = matchMedia('(max-width: 820px)').matches ? 0.42 : 0.52;
+const MW = Math.round(DW * ESC), MH = Math.round(DH * ESC);
+const N = MW * MH;
+const altura = new Float32Array(N), silueta = new Float32Array(N);
+const lienzo = document.createElement('canvas'); lienzo.width = MW; lienzo.height = MH;
+const cx = lienzo.getContext('2d', { willReadFrequently: true });
 
-/* ---------- piezas ---------- */
-const V = (x, y, z) => new THREE.Vector3(x, y, z);
-const EJE_Y = V(0, 1, 0), EJE_Z = V(0, 0, 1);
-
-// vara cónica: las piernas del compás
-function vara(a, b, r1, r2, mat) {
-  const d = new THREE.Vector3().subVectors(b, a), L = d.length();
-  const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, L, 26), mat);
-  m.position.copy(a).addScaledVector(d, 0.5);
-  m.quaternion.setFromUnitVectors(EJE_Y, d.clone().normalize());
+function mascara(dibujar) {
+  cx.setTransform(1, 0, 0, 1, 0, 0);
+  cx.clearRect(0, 0, MW, MH);
+  cx.setTransform(ESC, 0, 0, ESC, 0, 0);
+  cx.fillStyle = cx.strokeStyle = '#fff';
+  cx.lineCap = cx.lineJoin = 'round';
+  dibujar(cx);
+  const px = cx.getImageData(0, 0, MW, MH).data, m = new Float32Array(N);
+  for (let i = 0; i < N; i++) m[i] = px[i * 4 + 3] / 255;
   return m;
 }
-// listón de sección rectangular con canto biselado: los brazos de la escuadra.
-// El bisel es lo que separa un metal creíble de una caja de videojuego: es
-// donde nace el reflejo lineal que el ojo lee como "borde maquinado".
-function liston(a, b, ancho, grueso, mat) {
-  const d = new THREE.Vector3().subVectors(b, a), L = d.length();
-  const hw = ancho / 2, hg = grueso / 2, r = Math.min(hw, hg) * 0.5;
-  const s = new THREE.Shape();
-  s.moveTo(-hw + r, -hg);
-  s.lineTo( hw - r, -hg); s.quadraticCurveTo( hw, -hg,  hw, -hg + r);
-  s.lineTo( hw,  hg - r); s.quadraticCurveTo( hw,  hg,  hw - r,  hg);
-  s.lineTo(-hw + r,  hg); s.quadraticCurveTo(-hw,  hg, -hw,  hg - r);
-  s.lineTo(-hw, -hg + r); s.quadraticCurveTo(-hw, -hg, -hw + r, -hg);
-  const g = new THREE.ExtrudeGeometry(s, {
-    depth: L, bevelEnabled: true, bevelSize: 0.013, bevelThickness: 0.013,
-    bevelSegments: 2, curveSegments: 6
-  });
-  const m = new THREE.Mesh(g, mat);
-  m.position.copy(a);
-  m.quaternion.setFromUnitVectors(EJE_Z, d.clone().normalize());
+// desenfoque de caja separable, 2 pasadas ≈ gaussiano
+function suavizar(m, r) {
+  r = Math.max(1, Math.round(r * ESC));
+  const tmp = new Float32Array(N);
+  for (let pasada = 0; pasada < 2; pasada++) {
+    for (let y = 0; y < MH; y++) {
+      let s = 0; const o = y * MW;
+      for (let x = -r; x <= r; x++) s += m[o + Math.min(MW - 1, Math.max(0, x))];
+      for (let x = 0; x < MW; x++) {
+        tmp[o + x] = s / (2 * r + 1);
+        s += m[o + Math.min(MW - 1, x + r + 1)] - m[o + Math.max(0, x - r)];
+      }
+    }
+    for (let x = 0; x < MW; x++) {
+      let s = 0;
+      for (let y = -r; y <= r; y++) s += tmp[Math.min(MH - 1, Math.max(0, y)) * MW + x];
+      for (let y = 0; y < MH; y++) {
+        m[y * MW + x] = s / (2 * r + 1);
+        s += tmp[Math.min(MH - 1, y + r + 1) * MW + x] - tmp[Math.max(0, y - r) * MW + x];
+      }
+    }
+  }
   return m;
 }
+const elevar  = (nivel, bisel, dib) => { const m = suavizar(mascara(dib), bisel); for (let i = 0; i < N; i++) altura[i] = Math.max(altura[i], m[i] * nivel); return m; };
+const sumar   = (h, bisel, dib)     => { const m = suavizar(mascara(dib), bisel); for (let i = 0; i < N; i++) altura[i] += m[i] * h; };
+const grabar  = (h, bisel, dib)     => { const m = suavizar(mascara(dib), bisel); for (let i = 0; i < N; i++) altura[i] -= m[i] * h; };
+const contorno = dib => { const m = mascara(dib); for (let i = 0; i < N; i++) silueta[i] = Math.max(silueta[i], m[i]); };
 
+/* geometría del emblema (en unidades de diseño) */
+const PIV = [500, 160], CAB = 92;                     // cabeza del compás
+const PUNTA_I = [118, 985], PUNTA_D = [882, 985];     // puntas del compás
+const VERT = [500, 1035], BRAZO = 118;                // escuadra: vértice exterior y ancho
+const ALA_I = [-10, 525], ALA_D = [1010, 525];        // extremos de la escuadra (salen del marco)
+const pierna = (p, ancho0, ancho1) => {
+  const dx = p[0] - PIV[0], dy = p[1] - PIV[1], L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L;
+  return [[PIV[0] + nx * ancho0, PIV[1] + ny * ancho0], [p[0] + nx * ancho1, p[1] + ny * ancho1],
+          [p[0] - nx * ancho1, p[1] - ny * ancho1], [PIV[0] - nx * ancho0, PIV[1] - ny * ancho0]];
+};
+const poli = (c, pts) => { c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.closePath(); c.fill(); };
+const linea = (c, a, b, w) => { c.lineWidth = w; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); };
+// escuadra como dos brazos con canto exterior recto
+const brazoI = [ALA_I, VERT, [VERT[0], VERT[1] - BRAZO * 1.414], [ALA_I[0] + BRAZO * 1.414, ALA_I[1]]];
+const brazoD = [ALA_D, VERT, [VERT[0], VERT[1] - BRAZO * 1.414], [ALA_D[0] - BRAZO * 1.414, ALA_D[1]]];
+const campo  = [[500, 250], [292, 640], [500, 905], [708, 640]];
+
+/* silueta (lo que existe de la pieza) */
+contorno(c => {
+  poli(c, campo); poli(c, brazoI); poli(c, brazoD);
+  poli(c, pierna(PUNTA_I, 60, 17)); poli(c, pierna(PUNTA_D, 60, 17));
+  c.beginPath(); c.arc(PIV[0], PIV[1], CAB, 0, 7); c.fill();
+});
+
+/* 1) campo central, rebajado */
+elevar(0.2, 8, c => poli(c, campo));
+
+/* 2) roleos vegetales (genéricos, en espejo) */
+function roleo(c, x0, y0, escala, giro, sentido) {
+  c.save(); c.translate(x0, y0); c.rotate(giro); c.scale(escala * sentido, escala);
+  c.lineWidth = 14;
+  c.beginPath();
+  for (let t = 0; t <= 3.3 * Math.PI; t += 0.08) {
+    const r = 9 * Math.exp(0.2 * t), x = r * Math.cos(t), y = r * Math.sin(t);
+    t ? c.lineTo(x, y) : c.moveTo(x, y);
+  }
+  c.stroke();
+  // hojas a lo largo de la espiral
+  for (let t = 1.5; t <= 3.2 * Math.PI; t += 0.55) {
+    const r = 9 * Math.exp(0.2 * t), x = r * Math.cos(t), y = r * Math.sin(t);
+    c.save(); c.translate(x, y); c.rotate(t + 1.2);
+    c.beginPath(); c.ellipse(0, -14, 8, 22, 0, 0, 7); c.fill(); c.restore();
+  }
+  c.restore();
+}
+const adornos = c => {
+  for (const s of [1, -1]) {
+    c.save(); c.translate(500, 0); c.scale(s, 1); c.translate(-500, 0);
+    roleo(c, 430, 370, 0.95, -0.7, 1);
+    roleo(c, 370, 520, 0.9, 0.2, -1);
+    roleo(c, 380, 700, 0.85, 1.6, 1);
+    roleo(c, 440, 820, 0.7, 2.8, -1);
+    c.restore();
+  }
+  // palmeta central sobre la G y abanico bajo ella
+  for (let k = -4; k <= 4; k++) {
+    c.save(); c.translate(500, 470); c.rotate(k * 0.22);
+    c.beginPath(); c.ellipse(0, -46, 10, 40, 0, 0, 7); c.fill(); c.restore();
+    c.save(); c.translate(500, 800); c.rotate(Math.PI + k * 0.2);
+    c.beginPath(); c.ellipse(0, -34, 8, 28, 0, 0, 7); c.fill(); c.restore();
+  }
+};
+sumar(0.26, 3, adornos);
+// fondo picado: grano fino en el campo, como talla a gubia
+grabar(0.012, 1, c => { for (let i = 0; i < 700; i++) { const x = 300 + Math.random() * 400, y = 270 + Math.random() * 620; c.beginPath(); c.arc(x, y, 2 + Math.random() * 2.5, 0, 7); c.fill(); } });
+
+/* 3) la G, alta y biselada, con un grabado interior que le da filo */
+const G = c => { c.font = 'bold 300px Georgia, "Times New Roman", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('G', 500, 640); };
+elevar(0.66, 5, G);
+grabar(0.07, 2, c => { c.lineWidth = 5; c.font = 'bold 300px Georgia, "Times New Roman", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.strokeText('G', 500, 640); });
+
+/* 4) escuadra: cuerpo, filete interior grabado, gallones al pie */
+elevar(0.58, 6, c => { poli(c, brazoI); poli(c, brazoD); });
+grabar(0.08, 2, c => {
+  // filete paralelo al canto interior
+  const f = BRAZO * 1.414 - 38;
+  linea(c, [ALA_I[0] + f, ALA_I[1]], [VERT[0], VERT[1] - f], 6);
+  linea(c, [ALA_D[0] - f, ALA_D[1]], [VERT[0], VERT[1] - f], 6);
+});
+sumar(0.13, 2, c => {
+  // gallones: fila de hojas en relieve a lo largo de cada brazo, cerca del canto exterior
+  for (const lado of [-1, 1]) for (let i = 1; i < 17; i++) {
+    const k = i / 17, x = VERT[0] + lado * (ALA_D[0] - VERT[0]) * k, y = VERT[1] + (ALA_D[1] - VERT[1]) * k;
+    c.save(); c.translate(x - lado * 22, y - 22); c.rotate(lado * Math.PI / 4);
+    c.beginPath(); c.moveTo(0, -26); c.quadraticCurveTo(15, 0, 0, 26); c.quadraticCurveTo(-15, 0, 0, -26); c.fill(); c.restore();
+  }
+});
+grabar(0.06, 1, c => {
+  for (const lado of [-1, 1]) for (let i = 1; i < 17; i++) {
+    const k = i / 17, x = VERT[0] + lado * (ALA_D[0] - VERT[0]) * k, y = VERT[1] + (ALA_D[1] - VERT[1]) * k;
+    c.save(); c.translate(x - lado * 22, y - 22); c.rotate(lado * Math.PI / 4);
+    c.lineWidth = 3; c.beginPath(); c.moveTo(0, -20); c.lineTo(0, 20); c.stroke(); c.restore();
+  }
+});
+
+/* 5) piernas del compás: cuerpo + arista central (sección en tejado) */
+elevar(0.74, 6, c => { poli(c, pierna(PUNTA_I, 60, 17)); poli(c, pierna(PUNTA_D, 60, 17)); });
+sumar(0.16, 14, c => { linea(c, PIV, PUNTA_I, 22); linea(c, PIV, PUNTA_D, 22); });
+// filetes a lo largo de cada pierna
+grabar(0.05, 1, c => { for (const P of [PUNTA_I, PUNTA_D]) { const q = pierna(P, 44, 11); linea(c, q[0], q[1], 4); linea(c, q[3], q[2], 4); } });
+
+/* 6) cabeza: disco, anillos grabados, botón central */
+elevar(0.8, 6, c => { c.beginPath(); c.arc(PIV[0], PIV[1], CAB, 0, 7); c.fill(); });
+grabar(0.1, 2, c => { c.lineWidth = 7; for (const r of [70, 52]) { c.beginPath(); c.arc(PIV[0], PIV[1], r, 0, 7); c.stroke(); } });
+sumar(0.1, 4, c => { c.beginPath(); c.arc(PIV[0], PIV[1], 30, 0, 7); c.fill(); });
+grabar(0.06, 1, c => { c.lineWidth = 4; c.beginPath(); c.arc(PIV[0], PIV[1], 16, 0, 7); c.stroke(); });
+
+/* texturas derivadas: normales finas, cavidades (oclusión) y recorte */
+function texturaDesde(rgba) { const t = new THREE.DataTexture(rgba, MW, MH, THREE.RGBAFormat); t.flipY = true; t.needsUpdate = true; t.colorSpace = THREE.NoColorSpace; return t; }
+const nrm = new Uint8Array(N * 4), ao = new Uint8Array(N * 4), alfa = new Uint8Array(N * 4);
+{
+  const fuerza = 6;
+  const amplia = suavizar(Float32Array.from(altura), 14);
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
+    const i = y * MW + x;
+    const h = (xx, yy) => altura[Math.min(MH - 1, Math.max(0, yy)) * MW + Math.min(MW - 1, Math.max(0, xx))];
+    const dx = (h(x + 1, y) - h(x - 1, y)) * fuerza, dy = (h(x, y + 1) - h(x, y - 1)) * fuerza;
+    const l = Math.hypot(dx, dy, 1);
+    nrm[i * 4] = (-dx / l * .5 + .5) * 255; nrm[i * 4 + 1] = (dy / l * .5 + .5) * 255; nrm[i * 4 + 2] = (1 / l * .5 + .5) * 255; nrm[i * 4 + 3] = 255;
+    const cav = Math.min(1, Math.max(0, (amplia[i] - altura[i]) * 4));   // hondonadas = más oscuras
+    const v = (1 - cav * 0.75) * 255;
+    ao[i * 4] = ao[i * 4 + 1] = ao[i * 4 + 2] = v; ao[i * 4 + 3] = 255;
+    const a = silueta[i] * 255; alfa[i * 4] = alfa[i * 4 + 1] = alfa[i * 4 + 2] = a; alfa[i * 4 + 3] = 255;
+  }
+}
+
+/* ---------- malla ---------- */
+const ALTO = 3.75, ANCHO = ALTO * DW / DH, PROF = 0.32;
+const SX = 220, SY = Math.round(SX * DH / DW);
+const geo = new THREE.PlaneGeometry(ANCHO, ALTO, SX, SY);
+{
+  const pos = geo.attributes.position, uv = geo.attributes.uv;
+  const muestra = (u, v) => {
+    const x = Math.min(MW - 1, Math.max(0, u * (MW - 1))), y = Math.min(MH - 1, Math.max(0, (1 - v) * (MH - 1)));
+    const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, x1 = Math.min(MW - 1, x0 + 1), y1 = Math.min(MH - 1, y0 + 1);
+    const a = altura[y0 * MW + x0], b = altura[y0 * MW + x1], c = altura[y1 * MW + x0], d = altura[y1 * MW + x1];
+    return (a * (1 - fx) + b * fx) * (1 - fy) + (c * (1 - fx) + d * fx) * fy;
+  };
+  for (let i = 0; i < pos.count; i++) pos.setZ(i, muestra(uv.getX(i), uv.getY(i)) * PROF);
+  geo.computeVertexNormals();
+}
+const material = new THREE.MeshPhysicalMaterial({
+  color: ORO, metalness: 1, roughness: 0.4,
+  normalMap: texturaDesde(nrm), normalScale: new THREE.Vector2(0.9, 0.9),
+  aoMap: texturaDesde(ao), aoMapIntensity: 1,
+  alphaMap: texturaDesde(alfa), alphaTest: 0.5,
+  clearcoat: 0.25, clearcoatRoughness: 0.2,
+  envMapIntensity: 0.9, side: THREE.DoubleSide
+});
+const placa = new THREE.Mesh(geo, material);
 const emblema = new THREE.Group();
-
-/* ESCUADRA — ángulo recto abajo, brazos a 45°, ligeramente detrás */
-const zE = -0.22;
-const vertice = V(0, -1.52, zE);
-[[-1.52, 0.0], [1.52, 0.0]].forEach(([x, y]) => {
-  emblema.add(liston(vertice, V(x, y, zE), 0.28, 0.16, satin));
-});
-emblema.add(new THREE.Mesh(new THREE.SphereGeometry(0.145, 22, 18), satin).translateY(-1.52).translateZ(zE));
-
-/* COMPÁS — pivote arriba, piernas al frente */
-const zC = 0.22;
-const pivote = V(0, 1.52, zC);
-[[-1.06, -1.12], [1.06, -1.12]].forEach(([x, y]) => {
-  const punta = V(x, y, zC);
-  emblema.add(vara(pivote, punta, 0.135, 0.058, pulido));
-  const d = new THREE.Vector3().subVectors(punta, pivote).normalize();
-  const cono = new THREE.Mesh(new THREE.ConeGeometry(0.062, 0.26, 20), pulido);
-  cono.position.copy(punta).addScaledVector(d, 0.1);
-  cono.quaternion.setFromUnitVectors(EJE_Y, d);
-  emblema.add(cono);
-});
-// Cabeza articulada. Ojo con la forma: un disco plano y pulido de cara a la
-// cámara refleja lo que hay DETRÁS del observador, o sea la nada, y sale
-// negro. Una superficie curva siempre encuentra un cirio que devolver.
-const cabeza = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 24), brillo);
-cabeza.scale.set(1, 0.92, 0.62);
-cabeza.position.copy(pivote);
-emblema.add(cabeza);
-const corona = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.055, 16, 40), pulido);
-corona.position.copy(pivote);
-emblema.add(corona);
-emblema.add(new THREE.Mesh(new THREE.SphereGeometry(0.15, 24, 18), brillo).translateY(1.86).translateZ(zC));
-
-/* punto central */
-emblema.add(new THREE.Mesh(new THREE.SphereGeometry(0.16, 28, 22), pulido).translateY(-0.02).translateZ(0.42));
-
-emblema.position.y = -0.06;
+emblema.add(placa);
+emblema.position.y = -0.04;
 escena.add(emblema);
 
-/* ---------- medidas ----------
-   El lienzo nace con display:none para no ocupar sitio si el 3D nunca llega.
-   Hay que mostrarlo antes de medirlo o el buffer sale de 1x1 píxel.          */
+/* ---------- medidas ---------- */
 canvas.classList.add('activo');
 const TOPE_DPR = matchMedia('(max-width: 820px)').matches ? 1.75 : 2;
 function medir() {
@@ -169,37 +290,54 @@ function medir() {
 medir();
 addEventListener('resize', medir, { passive: true });
 
+/* ---------- puntero ---------- */
+const objetivo = { x: 0, y: 0 }, actual = { x: 0, y: 0 };
+if (matchMedia('(pointer: fine)').matches) {
+  addEventListener('pointermove', e => {
+    objetivo.x = (e.clientX / innerWidth - 0.5) * 2;
+    objetivo.y = (e.clientY / innerHeight - 0.5) * 2;
+  }, { passive: true });
+}
+
 /* ---------- ciclo ---------- */
 let inicio = null, raf = 0, visible = true, transcurrido = 0, ultimo = 0;
+const easeOut = k => 1 - Math.pow(1 - k, 3);
+const tramo = (t, a, b) => Math.min(Math.max((t - a) / (b - a), 0), 1);
 
 function cuadro(ahora) {
   raf = requestAnimationFrame(cuadro);
   if (inicio === null) { inicio = ahora; ultimo = ahora; }
-  transcurrido += Math.min((ahora - ultimo) / 1000, 0.05);   // el vaivén no salta tras una pausa
-  ultimo = ahora;
-  const t = transcurrido;
+  const dt = Math.min((ahora - ultimo) / 1000, 0.05);
+  transcurrido += dt; ultimo = ahora;
+  const t = transcurrido, s = (ahora - inicio) / 1000;
 
-  // la aparición se mide en tiempo real: debe durar lo mismo en un equipo lento
-  const k = Math.min((ahora - inicio) / 2800, 1), e = 1 - Math.pow(1 - k, 3);
-  renderer.toneMappingExposure = 1.3 * e;
-  canvas.style.opacity = e.toFixed(3);
-  if (poster && e > 0.25) poster.style.opacity = String(Math.max(0, 1 - (e - 0.25) / 0.5));
+  // aparición (tiempo real, igual en un equipo lento)
+  const luz = easeOut(tramo(s, 0, 2.2));
+  renderer.toneMappingExposure = 1.15 * luz;
+  canvas.style.opacity = luz.toFixed(3);
+  if (poster && luz > 0.25) poster.style.opacity = String(Math.max(0, 1 - (luz - 0.25) / 0.5));
 
-  // giro pendular: una pieza plana en giro completo desaparece de canto media
-  // vuelta. El vaivén la mantiene legible y hace que el reflejo la recorra.
-  emblema.rotation.y = -1.05 * (1 - e) + Math.sin(t * 0.4) * 0.62;
-  emblema.rotation.x = Math.sin(t * 0.26) * 0.1 - 0.05;
-  emblema.position.y = -0.06 + Math.sin(t * 0.48) * 0.05;
+  // la luz rasante barre la talla de derecha a izquierda al entrar y luego respira
+  const barrido = easeOut(tramo(s, 0.2, 3.2));
+  const ang = 0.15 + (1 - barrido) * 2.4 + Math.sin(t * 0.3) * 0.25;   // ángulo alrededor de la pieza
+  rasante.position.set(Math.cos(ang + 2.0) * 6, Math.sin(ang + 2.0) * 6, 2.2);
+
+  // reposo: oscilación corta (es una placa, de canto no tiene grosor) + puntero
+  actual.x += (objetivo.x - actual.x) * Math.min(1, dt * 3);
+  actual.y += (objetivo.y - actual.y) * Math.min(1, dt * 3);
+  const entrada = easeOut(tramo(s, 0, 2.8));
+  emblema.rotation.y = -0.5 * (1 - entrada) + Math.sin(t * 0.32) * 0.2 * entrada + actual.x * 0.18;
+  emblema.rotation.x = Math.sin(t * 0.22) * 0.05 - 0.02 + actual.y * 0.12;
+  emblema.position.y = -0.04 + Math.sin(t * 0.45) * 0.035;
+  escena.environmentRotation.y = t * 0.1;
 
   renderer.render(escena, camara);
 }
 
 function arrancar() { if (!raf) { ultimo = performance.now(); raf = requestAnimationFrame(cuadro); } }
 function parar()    { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
-
 arrancar();
 
-// no gastar batería con el hero fuera de pantalla ni con la pestaña oculta
 new IntersectionObserver(es => {
   visible = es[0].isIntersecting;
   visible && !document.hidden ? arrancar() : parar();
