@@ -234,6 +234,17 @@
   .field label{transition:color .3s}
   .field:focus-within label{color:var(--vino-claro)}
   textarea{resize:vertical;min-height:110px}
+  /* Agenda (se llena desde la hoja de contenido) */
+  #eventos .eventos-list{display:grid;gap:16px}
+  .evento{display:grid;grid-template-columns:84px 1fr;gap:18px;align-items:start;background:var(--pergamino);border-radius:16px;padding:18px 20px;box-shadow:0 10px 30px rgba(28,6,14,.12)}
+  .evento-fecha{text-align:center;background:var(--vino);color:var(--dorado-claro);border-radius:12px;padding:10px 6px;line-height:1.1}
+  .evento-fecha .dia{display:block;font-size:1.8rem;font-weight:700}
+  .evento-fecha .mes{display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+  .evento h3{margin:2px 0 6px;font-size:1.15rem}
+  .evento .meta{font-size:.9rem;opacity:.75;margin-bottom:6px}
+  .evento .meta::first-letter{text-transform:uppercase}
+  .evento p{margin:0}
+  .foot-contacto a{color:inherit;text-decoration:underline;text-underline-offset:3px}
   /* Campo bien llenado: borde verde y check */
   .field input.is-valid,.field textarea.is-valid{border-color:#3f8f4a;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%233f8f4a'/%3E%3Cpath d='M5.5 10.5l3 3 6-6.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:18px;padding-right:42px}
   .field textarea.is-valid{background-position:right 14px top 14px}
@@ -512,6 +523,17 @@
   </div>
 </section>
 
+<section id="eventos" hidden>
+  <div class="container" style="max-width:760px">
+    <div class="section-title">
+      <span class="over sans">Agenda</span>
+      <h2>Próximas actividades</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="eventos-list"></div>
+  </div>
+</section>
+
 <section id="contacto" style="background:#ddd0c0">
   <div class="container">
     <div class="section-title reveal">
@@ -555,6 +577,7 @@
     <p class="foot-logo sans">R∴L∴S∴ CIBELES N° 176</p>
     <p>Vall∴ de Lima · Ori∴ del Perú · Miembro de la Gran Logia del Perú</p>
     <p style="opacity:.8">Fundada el 19 de febrero de 2009 (e∴v∴)</p>
+    <p class="foot-contacto" hidden></p>
     <p style="margin-top:14px">© <span id="year"></span> R∴L∴S∴ Cibeles N° 176 — Fraternidad, virtud y servicio</p>
   </div>
 </footer>
@@ -661,20 +684,123 @@
     }, {once:true});
   });
 
-  // FAQ: acordeón con apertura y cierre animados
-  document.querySelectorAll('#faq details').forEach(d => {
-    d.querySelector('summary').addEventListener('click', e => {
-      if (reduce) { d.classList.toggle('is-open', !d.open); return; }
-      e.preventDefault();
-      if (d.open) {
-        d.classList.remove('is-open');
-        setTimeout(() => { d.open = false; }, 430);
-      } else {
-        d.open = true;
-        requestAnimationFrame(() => d.classList.add('is-open'));
-      }
-    });
+  // FAQ: acordeón con apertura y cierre animados (delegado: también sirve para preguntas cargadas desde la hoja)
+  document.getElementById('faq').addEventListener('click', e => {
+    const s = e.target.closest('summary');
+    const d = s && s.parentElement;
+    if (!d || d.tagName !== 'DETAILS') return;
+    if (reduce) { d.classList.toggle('is-open', !d.open); return; }
+    e.preventDefault();
+    if (d.open) {
+      d.classList.remove('is-open');
+      setTimeout(() => { d.open = false; }, 430);
+    } else {
+      d.open = true;
+      requestAnimationFrame(() => d.classList.add('is-open'));
+    }
   });
+
+  // ===== Contenido editable desde Google Sheets ("Web Cibeles — Contenido") =====
+  // Si la hoja no responde o una celda está vacía, se mantiene el texto original de esta página.
+  (() => {
+    const CONTENT_URL = 'https://script.google.com/macros/s/AKfycbzemgLbM0YyFzJu6wkx75igO5CwEkG9tcS1KqNTeQff9H_IaBCTdk1sEZCzEpdPxVhNFg/exec';
+    const NOMBRES = { inicio: 'Portada', masoneria: 'La Masonería', peru: 'En el Perú', logia: 'Quiénes Somos', viaje: 'El Viaje', ingreso: 'Cómo Ingresar', faq: 'Preguntas', contacto: 'Contacto', pie: 'Pie de página' };
+    const TIPOS = { H1: 'Título principal', H2: 'Título', H3: 'Subtítulo', H4: 'Subtítulo', P: 'Párrafo', LI: 'Ítem', A: 'Botón', SPAN: 'Etiqueta' };
+    const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
+    // Recorre la página en orden fijo y le da una clave a cada texto editable (ej. masoneria-02).
+    const targets = () => {
+      const out = [], vistos = new Set();
+      document.querySelectorAll('#inicio, section[id], footer').forEach(root => {
+        if (vistos.has(root) || root.id === 'eventos') return;
+        vistos.add(root);
+        const sec = root.tagName === 'FOOTER' ? 'pie' : root.id;
+        let n = 0;
+        root.querySelectorAll('h1,h2,h3,h4,p,li,span.over,a.btn').forEach(el => {
+          if (el.closest('details, form, nav, #eventos, .foot-contacto')) return;
+          if (el.tagName !== 'A' && el.children.length) return;
+          if (!el.textContent.trim()) return;
+          n++;
+          out.push({ key: sec + '-' + String(n).padStart(2, '0'), el: el, sec: sec });
+        });
+      });
+      return out;
+    };
+    // Contenido original de la página, para cargarlo una sola vez en la hoja.
+    window.cmsSemilla = () => ({
+      textos: targets().map(t => [t.key, NOMBRES[t.sec] || t.sec,
+        t.el.matches('span.over, p.kicker, p.invocacion, p.scroll-hint') ? 'Etiqueta' : (TIPOS[t.el.tagName] || 'Texto'),
+        t.el.textContent.replace(/\s+/g, ' ').trim()]),
+      faq: [...document.querySelectorAll('#faq details')].map((d, i) => [i + 1,
+        d.querySelector('summary').textContent.trim(),
+        (d.querySelector('.answer p') || d.querySelector('.answer')).textContent.trim(), 'Sí'])
+    });
+    const pintarEventos = lista => {
+      const sec = document.getElementById('eventos');
+      if (!sec) return;
+      const cont = sec.querySelector('.eventos-list');
+      cont.textContent = '';
+      const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      lista.forEach(ev => {
+        const [y, m, d] = String(ev.fecha || '').split('-').map(Number);
+        if (!y || !m || !d || new Date(y, m - 1, d) < hoy) return;
+        const card = document.createElement('article'); card.className = 'evento';
+        const f = document.createElement('div'); f.className = 'evento-fecha';
+        const dia = document.createElement('span'); dia.className = 'dia'; dia.textContent = d;
+        const mes = document.createElement('span'); mes.className = 'mes'; mes.textContent = MESES[m - 1] + ' ' + y;
+        f.append(dia, mes);
+        const body = document.createElement('div');
+        const h = document.createElement('h3'); h.textContent = ev.titulo;
+        const meta = document.createElement('div'); meta.className = 'meta';
+        meta.textContent = [new Date(y, m - 1, d).toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }), ev.hora, ev.lugar].filter(Boolean).join(' · ');
+        body.append(h, meta);
+        if (ev.descripcion) { const p = document.createElement('p'); p.textContent = ev.descripcion; body.append(p); }
+        card.append(f, body);
+        cont.append(card);
+      });
+      sec.hidden = !cont.children.length;
+    };
+    const pintarContacto = c => {
+      const p = document.querySelector('.foot-contacto');
+      if (!p) return;
+      const partes = [];
+      const add = (texto, href) => {
+        if (!href) { partes.push(document.createTextNode(texto)); return; }
+        const a = document.createElement('a'); a.href = href; a.textContent = texto;
+        if (/^https?:/.test(href)) { a.target = '_blank'; a.rel = 'noopener'; }
+        partes.push(a);
+      };
+      if (c.direccion) add(c.direccion);
+      if (c.correo && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.correo)) add(c.correo, 'mailto:' + c.correo);
+      if (c.whatsapp) { const n = c.whatsapp.replace(/\D/g, ''); if (n.length >= 9) add('WhatsApp ' + c.whatsapp, 'https://wa.me/' + (n.length === 9 ? '51' + n : n)); }
+      if (c.facebook && /^https:\/\//.test(c.facebook)) add('Facebook', c.facebook);
+      if (c.instagram && /^https:\/\//.test(c.instagram)) add('Instagram', c.instagram);
+      p.textContent = '';
+      partes.forEach((n, i) => { if (i) p.append(document.createTextNode(' · ')); p.append(n); });
+      p.hidden = !partes.length;
+    };
+    fetch(CONTENT_URL).then(r => r.ok ? r.json() : null).then(d => {
+      if (!d || !d.ok) return;
+      const T = d.textos || {};
+      targets().forEach(t => { const v = T[t.key]; if (typeof v === 'string' && v.trim()) t.el.textContent = v; });
+      if (Array.isArray(d.faq) && d.faq.length) {
+        const items = [...document.querySelectorAll('#faq details')];
+        const tpl = items[0];
+        if (tpl) {
+          const parent = tpl.parentElement;
+          items.forEach(x => x.remove());
+          d.faq.forEach(q => {
+            const n = tpl.cloneNode(true);
+            n.open = false; n.classList.remove('is-open'); n.classList.add('visible');
+            n.querySelector('summary').textContent = q.p;
+            (n.querySelector('.answer p') || n.querySelector('.answer')).textContent = q.r;
+            parent.append(n);
+          });
+        }
+      }
+      pintarEventos(Array.isArray(d.eventos) ? d.eventos : []);
+      pintarContacto(d.contacto || {});
+    }).catch(() => {});
+  })();
 
   // Marca en verde cada campo bien llenado (clase .is-valid)
   (() => {
