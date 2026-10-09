@@ -524,11 +524,11 @@
           </div>
           <div class="field">
             <label for="correo">Correo electrónico *</label>
-            <input type="email" id="correo" name="correo" required>
+            <input type="email" id="correo" name="correo" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Ingresa un correo válido, por ejemplo nombre@correo.com" autocomplete="email">
           </div>
           <div class="field">
             <label for="telefono">Celular / WhatsApp *</label>
-            <input type="tel" id="telefono" name="telefono" required>
+            <input type="tel" id="telefono" name="telefono" required inputmode="numeric" maxlength="9" pattern="[0-9]{1,9}" title="Solo números, máximo 9 dígitos" autocomplete="tel-national" oninput="this.value=this.value.replace(/\D/g,'').slice(0,9)">
           </div>
           <div class="field full">
             <label for="mensaje">Mensaje *</label>
