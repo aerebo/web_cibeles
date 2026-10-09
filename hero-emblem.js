@@ -3,8 +3,8 @@
  *  Si algo falla, el SVG de póster se queda en su lugar y nadie se entera.
  *
  *  v3 (relieve): la pieza se "talla" en un mapa de alturas pintado por código
- *  (compás con arista central, escuadra con filete y gallones, campo central con
- *  roleos vegetales y la G), que desplaza una malla densa y da sus normales.
+ *  (compás con arista central, escuadra con filete y gallones, y la G sola al
+ *  centro), que desplaza una malla densa y da sus normales.
  *  La luz rasante barre la talla al aparecer; en reposo la pieza oscila poco y
  *  sigue al puntero, como una placa colgada.                                   */
 
@@ -136,64 +136,24 @@ const linea = (c, a, b, w) => { c.lineWidth = w; c.beginPath(); c.moveTo(a[0], a
 // escuadra como dos brazos con canto exterior recto
 const brazoI = [ALA_I, VERT, [VERT[0], VERT[1] - BRAZO * 1.414], [ALA_I[0] + BRAZO * 1.414, ALA_I[1]]];
 const brazoD = [ALA_D, VERT, [VERT[0], VERT[1] - BRAZO * 1.414], [ALA_D[0] - BRAZO * 1.414, ALA_D[1]]];
-const campo  = [[500, 250], [292, 640], [500, 905], [708, 640]];
+
+/* la G, sola en el centro */
+const G = c => { c.font = 'bold 300px Georgia, "Times New Roman", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('G', 500, 640); };
 
 /* silueta (lo que existe de la pieza) */
-contorno(c => {
-  poli(c, campo); poli(c, brazoI); poli(c, brazoD);
+function dibujarSilueta(c) {
+  G(c); poli(c, brazoI); poli(c, brazoD);
   poli(c, pierna(PUNTA_I, 60, 17)); poli(c, pierna(PUNTA_D, 60, 17));
   c.beginPath(); c.arc(PIV[0], PIV[1], CAB, 0, 7); c.fill();
-});
-
-/* 1) campo central, rebajado */
-elevar(0.2, 8, c => poli(c, campo));
-
-/* 2) roleos vegetales (genéricos, en espejo) */
-function roleo(c, x0, y0, escala, giro, sentido) {
-  c.save(); c.translate(x0, y0); c.rotate(giro); c.scale(escala * sentido, escala);
-  c.lineWidth = 14;
-  c.beginPath();
-  for (let t = 0; t <= 3.3 * Math.PI; t += 0.08) {
-    const r = 9 * Math.exp(0.2 * t), x = r * Math.cos(t), y = r * Math.sin(t);
-    t ? c.lineTo(x, y) : c.moveTo(x, y);
-  }
-  c.stroke();
-  // hojas a lo largo de la espiral
-  for (let t = 1.5; t <= 3.2 * Math.PI; t += 0.55) {
-    const r = 9 * Math.exp(0.2 * t), x = r * Math.cos(t), y = r * Math.sin(t);
-    c.save(); c.translate(x, y); c.rotate(t + 1.2);
-    c.beginPath(); c.ellipse(0, -14, 8, 22, 0, 0, 7); c.fill(); c.restore();
-  }
-  c.restore();
 }
-const adornos = c => {
-  for (const s of [1, -1]) {
-    c.save(); c.translate(500, 0); c.scale(s, 1); c.translate(-500, 0);
-    roleo(c, 430, 370, 0.95, -0.7, 1);
-    roleo(c, 370, 520, 0.9, 0.2, -1);
-    roleo(c, 380, 700, 0.85, 1.6, 1);
-    roleo(c, 440, 820, 0.7, 2.8, -1);
-    c.restore();
-  }
-  // palmeta central sobre la G y abanico bajo ella
-  for (let k = -4; k <= 4; k++) {
-    c.save(); c.translate(500, 470); c.rotate(k * 0.22);
-    c.beginPath(); c.ellipse(0, -46, 10, 40, 0, 0, 7); c.fill(); c.restore();
-    c.save(); c.translate(500, 800); c.rotate(Math.PI + k * 0.2);
-    c.beginPath(); c.ellipse(0, -34, 8, 28, 0, 0, 7); c.fill(); c.restore();
-  }
-};
-sumar(0.26, 3, adornos);
-// fondo picado: grano fino en el campo, como talla a gubia
-grabar(0.012, 1, c => { for (let i = 0; i < 700; i++) { const x = 300 + Math.random() * 400, y = 270 + Math.random() * 620; c.beginPath(); c.arc(x, y, 2 + Math.random() * 2.5, 0, 7); c.fill(); } });
+contorno(dibujarSilueta);
 
 /* 3) la G, alta y biselada, con un grabado interior que le da filo */
-const G = c => { c.font = 'bold 300px Georgia, "Times New Roman", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('G', 500, 640); };
 elevar(0.66, 5, G);
 grabar(0.07, 2, c => { c.lineWidth = 5; c.font = 'bold 300px Georgia, "Times New Roman", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.strokeText('G', 500, 640); });
 
 /* 4) escuadra: cuerpo, filete interior grabado, gallones al pie */
-elevar(0.58, 6, c => { poli(c, brazoI); poli(c, brazoD); });
+elevar(0.58, 4, c => { poli(c, brazoI); poli(c, brazoD); });
 grabar(0.08, 2, c => {
   // filete paralelo al canto interior
   const f = BRAZO * 1.414 - 38;
@@ -217,7 +177,7 @@ grabar(0.06, 1, c => {
 });
 
 /* 5) piernas del compás: cuerpo + arista central (sección en tejado) */
-elevar(0.74, 6, c => { poli(c, pierna(PUNTA_I, 60, 17)); poli(c, pierna(PUNTA_D, 60, 17)); });
+elevar(0.74, 4, c => { poli(c, pierna(PUNTA_I, 60, 17)); poli(c, pierna(PUNTA_D, 60, 17)); });
 sumar(0.16, 14, c => { linea(c, PIV, PUNTA_I, 22); linea(c, PIV, PUNTA_D, 22); });
 // filetes a lo largo de cada pierna
 grabar(0.05, 1, c => { for (const P of [PUNTA_I, PUNTA_D]) { const q = pierna(P, 44, 11); linea(c, q[0], q[1], 4); linea(c, q[3], q[2], 4); } });
@@ -229,7 +189,21 @@ sumar(0.1, 4, c => { c.beginPath(); c.arc(PIV[0], PIV[1], 30, 0, 7); c.fill(); }
 grabar(0.06, 1, c => { c.lineWidth = 4; c.beginPath(); c.arc(PIV[0], PIV[1], 16, 0, 7); c.stroke(); });
 
 /* texturas derivadas: normales finas, cavidades (oclusión) y recorte */
-function texturaDesde(rgba) { const t = new THREE.DataTexture(rgba, MW, MH, THREE.RGBAFormat); t.flipY = true; t.needsUpdate = true; t.colorSpace = THREE.NoColorSpace; return t; }
+function texturaDesde(rgba) {
+  const t = new THREE.DataTexture(rgba, MW, MH, THREE.RGBAFormat);
+  t.flipY = true; t.colorSpace = THREE.NoColorSpace;
+  t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true;
+  t.needsUpdate = true; return t;
+}
+/* Recorte en alta resolución, dibujado directo de los vectores: el canto sale limpio
+   (antes salía de la máscara chica y con filtro 'nearest', de ahí el borde aserrado). */
+function recorteNitido() {
+  const R = 2, c = document.createElement('canvas'); c.width = DW * R / 1.0 | 0; c.height = DH * R | 0;
+  const k = c.getContext('2d'); k.setTransform(R, 0, 0, R, 0, 0); k.fillStyle = '#fff'; k.lineJoin = 'round';
+  dibujarSilueta(k);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.NoColorSpace;
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy(); return t;
+}
 const nrm = new Uint8Array(N * 4), ao = new Uint8Array(N * 4), alfa = new Uint8Array(N * 4);
 {
   const fuerza = 6;
@@ -248,7 +222,7 @@ const nrm = new Uint8Array(N * 4), ao = new Uint8Array(N * 4), alfa = new Uint8A
 }
 
 /* ---------- malla ---------- */
-const ALTO = 3.75, ANCHO = ALTO * DW / DH, PROF = 0.32;
+const ALTO = 3.75, ANCHO = ALTO * DW / DH, PROF = 0.07;   // el relieve lo dibuja el mapa de normales; la malla casi plana evita cantos aserrados
 const SX = 220, SY = Math.round(SX * DH / DW);
 const geo = new THREE.PlaneGeometry(ANCHO, ALTO, SX, SY);
 {
@@ -264,9 +238,9 @@ const geo = new THREE.PlaneGeometry(ANCHO, ALTO, SX, SY);
 }
 const material = new THREE.MeshPhysicalMaterial({
   color: ORO, metalness: 1, roughness: 0.4,
-  normalMap: texturaDesde(nrm), normalScale: new THREE.Vector2(0.9, 0.9),
+  normalMap: texturaDesde(nrm), normalScale: new THREE.Vector2(1.25, 1.25),
   aoMap: texturaDesde(ao), aoMapIntensity: 1,
-  alphaMap: texturaDesde(alfa), alphaTest: 0.5,
+  alphaMap: recorteNitido(), alphaTest: 0.5, alphaToCoverage: true,
   clearcoat: 0.25, clearcoatRoughness: 0.2,
   envMapIntensity: 0.9, side: THREE.DoubleSide
 });
