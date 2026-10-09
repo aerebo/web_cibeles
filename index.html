@@ -604,7 +604,7 @@
       var prueba = document.createElement('canvas');
       if (!(prueba.getContext('webgl2') || prueba.getContext('webgl'))) return;
     } catch (e) { return; }
-    var cargar = function(){ import('./hero-emblem.js').catch(function(){}); };
+    var cargar = function(){ import('./hero-emblem.js?v=3').catch(function(){}); };
     addEventListener('load', function(){
       // después del primer pintado, para no competir con el LCP
       if (window.requestIdleCallback) requestIdleCallback(cargar, {timeout: 2500});
