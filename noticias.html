@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noticias — R∴L∴S∴ Cibeles N° 176</title>
+<meta name="description" content="Noticias y actividades de la R∴L∴S∴ Cibeles N° 176, Valle de Lima.">
+<style>
+  :root{
+    --vino:#5e0f22;--vino-oscuro:#3f0916;--vino-claro:#9c2743;
+    --dorado:#c9a227;--dorado-claro:#e6c65c;
+    --crema:#e8ded2;--blanco:#f4eee4;--gris:#57504b;--tinta:#241016;
+    --sombra:rgba(28,6,14,.16);--ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:90px}
+  body{font-family:Georgia,'Times New Roman',serif;color:var(--tinta);background:var(--crema);line-height:1.7;-webkit-font-smoothing:antialiased}
+  .sans{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+  .container{max-width:860px;margin:0 auto;padding:0 24px}
+
+  /* Barra superior */
+  .barra{position:sticky;top:0;z-index:10;background:rgba(63,9,22,.95);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .barra-in{max-width:1100px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .logo{display:flex;align-items:center;gap:10px;color:var(--dorado-claro);text-decoration:none;letter-spacing:.1em;font-size:1.05rem;white-space:nowrap}
+  .logo img{height:46px;width:auto;display:block}
+  .logo-text{display:flex;flex-direction:column;line-height:1.15}
+  .logo .sigla{opacity:.75;font-size:.68em;letter-spacing:.18em}
+  .volver{color:#f2e4e0;text-decoration:none;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .volver:hover{color:var(--dorado-claro)}
+
+  /* Cabecera */
+  .cabecera{background:linear-gradient(160deg,var(--vino-oscuro),var(--vino));color:var(--crema);text-align:center;padding:70px 0 64px}
+  .cabecera .over{display:block;color:var(--dorado-claro);letter-spacing:.28em;text-transform:uppercase;font-size:.76rem;margin-bottom:14px}
+  .cabecera h1{font-size:clamp(1.8rem,4.4vw,2.8rem);line-height:1.2;font-weight:700}
+  .cabecera .rule{width:60px;height:2px;background:var(--dorado);margin:22px auto 0}
+  .cabecera p{margin-top:18px;font-style:italic;opacity:.9}
+
+  /* Lista de noticias */
+  main{padding:56px 0 80px}
+  .estado{text-align:center;color:var(--gris);padding:40px 0}
+  .noticia{background:var(--blanco);border-radius:18px;border-top:3px solid var(--dorado);box-shadow:0 10px 34px var(--sombra);padding:34px 36px 36px;margin-bottom:34px}
+  .noticia-fecha{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--vino-claro)}
+  .noticia h2{font-size:clamp(1.35rem,3vw,1.75rem);line-height:1.3;margin:8px 0 20px}
+  .portada{border-radius:14px;overflow:hidden;margin-bottom:24px;background:var(--vino-oscuro)}
+  .portada img{width:100%;height:auto;max-height:560px;object-fit:cover;display:block}
+  .noticia-texto p{margin-bottom:14px;color:#3f3236;font-size:1.04rem}
+  .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:20px}
+  .fotos a{display:block;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--vino-oscuro)}
+  .fotos img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+  .fotos a:hover img{transform:scale(1.05)}
+  .noticia:target{box-shadow:0 0 0 2px var(--dorado),0 10px 34px var(--sombra)}
+
+  footer{background:var(--vino-oscuro);color:#caa8ad;text-align:center;padding:40px 24px;font-size:.9rem}
+  footer a{color:var(--dorado-claro)}
+
+  @media(max-width:640px){
+    .logo .sigla{display:none}
+    .logo img{height:38px}
+    .cabecera{padding:52px 0 48px}
+    main{padding:36px 0 60px}
+    .noticia{padding:24px 20px 26px;border-radius:14px}
+  }
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="barra-in">
+    <a class="logo sans" href="index.html">
+      <img src="logo-cibeles.webp" srcset="logo-cibeles.webp 1x, logo-cibeles@2x.webp 2x" alt="Logo R∴L∴S∴ Cibeles N° 176" width="43" height="46">
+      <span class="logo-text"><span class="sigla">R∴L∴S∴</span><span>CIBELES 176</span></span>
+    </a>
+    <a class="volver sans" href="index.html#noticias">&larr; Volver al inicio</a>
+  </div>
+</header>
+
+<section class="cabecera">
+  <div class="container">
+    <span class="over sans" id="t-over">Noticias</span>
+    <h1 id="t-titulo">R∴L∴S∴ Cibeles 176 Vall∴ Lima</h1>
+    <div class="rule"></div>
+    <p id="t-intro">Con nuestro V∴M∴ R∴H∴ Gilbert Chávez Ramos</p>
+  </div>
+</section>
+
+<main>
+  <div class="container" id="lista">
+    <p class="estado sans">Cargando noticias…</p>
+  </div>
+</main>
+
+<footer>
+  <p class="sans" style="letter-spacing:.14em">R∴L∴S∴ CIBELES N° 176</p>
+  <p>Vall∴ de Lima · Ori∴ del Perú</p>
+  <p style="margin-top:10px"><a href="index.html">Volver a la página principal</a></p>
+</footer>
+
+<script>
+(() => {
+  const CONTENT_URL = 'https://script.google.com/macros/s/AKfycbzemgLbM0YyFzJu6wkx75igO5CwEkG9tcS1KqNTeQff9H_IaBCTdk1sEZCzEpdPxVhNFg/exec';
+  const lista = document.getElementById('lista');
+  // Enlaces de Google Drive compartidos -> imagen directa
+  const urlFoto = u => {
+    const m = String(u).match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
+    return m ? 'https://lh3.googleusercontent.com/d/' + m[1] + '=w1600' : u;
+  };
+  const slug = n => 'n-' + n.fecha + '-' + n.titulo.normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
+  const fechaLarga = f => {
+    const [y, m, d] = String(f).split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+  const img = (src, alt) => {
+    const i = document.createElement('img');
+    i.src = urlFoto(src); i.alt = alt; i.loading = 'lazy'; i.decoding = 'async'; i.referrerPolicy = 'no-referrer';
+    return i;
+  };
+  const estado = t => { lista.textContent = ''; const p = document.createElement('p'); p.className = 'estado sans'; p.textContent = t; lista.append(p); };
+
+  fetch(CONTENT_URL).then(r => r.ok ? r.json() : null).then(d => {
+    if (!d || !d.ok) throw new Error('sin datos');
+    const T = d.textos || {};
+    [['t-over', 'noticias-01'], ['t-titulo', 'noticias-02'], ['t-intro', 'noticias-03']].forEach(([id, k]) => {
+      if (typeof T[k] === 'string' && T[k].trim()) document.getElementById(id).textContent = T[k];
+    });
+    const noticias = (Array.isArray(d.noticias) ? d.noticias : [])
+      .filter(n => n && n.titulo && /^\d{4}-\d{2}-\d{2}$/.test(n.fecha))
+      .sort((a, b) => a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : 0);
+    if (!noticias.length) { estado('Pronto publicaremos novedades de la logia.'); return; }
+    lista.textContent = '';
+    noticias.forEach(n => {
+      const art = document.createElement('article'); art.className = 'noticia'; art.id = slug(n);
+      const t = document.createElement('time'); t.className = 'noticia-fecha sans'; t.dateTime = n.fecha; t.textContent = fechaLarga(n.fecha);
+      const h = document.createElement('h2'); h.textContent = n.titulo;
+      art.append(t, h);
+      const fotos = Array.isArray(n.fotos) ? n.fotos : [];
+      if (fotos[0]) { const f = document.createElement('div'); f.className = 'portada'; f.append(img(fotos[0], n.titulo)); art.append(f); }
+      const cuerpo = document.createElement('div'); cuerpo.className = 'noticia-texto';
+      String(n.texto || n.resumen || '').split(/\n+/).map(s => s.trim()).filter(Boolean).forEach(s => {
+        const p = document.createElement('p'); p.textContent = s; cuerpo.append(p);
+      });
+      art.append(cuerpo);
+      if (fotos.length > 1) {
+        const g = document.createElement('div'); g.className = 'fotos';
+        fotos.slice(1).forEach((u, i) => {
+          const a = document.createElement('a'); a.href = urlFoto(u); a.target = '_blank'; a.rel = 'noopener';
+          a.append(img(u, n.titulo + ' — foto ' + (i + 2))); g.append(a);
+        });
+        art.append(g);
+      }
+      lista.append(art);
+    });
+    if (location.hash) { const el = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (el) el.scrollIntoView(); }
+  }).catch(() => estado('No pudimos cargar las noticias. Intenta de nuevo en unos minutos.'));
+})();
+</script>
+</body>
+</html>
