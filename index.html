@@ -112,12 +112,6 @@
     .logo .sigla{display:none}
   }
 
-  /* Con siete enlaces la barra ya no cabe en tabletas: menú hamburguesa hasta 1100px */
-  @media(max-width:1100px){
-    .nav-links{position:fixed;top:54px;right:-100%;flex-direction:column;background:var(--vino-oscuro);width:72%;max-width:300px;height:100vh;padding:38px 28px;gap:24px;transition:right .45s var(--ease);align-items:flex-start}
-    .nav-links.open{right:0}
-    .burger{display:block}
-  }
 
   /* ===== Barra de progreso de lectura ===== */
   .progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:110;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--dorado),var(--dorado-claro));will-change:transform}
@@ -349,6 +343,12 @@
   .btn-noticias{display:inline-block;padding:14px 30px;border-radius:999px;border:1.5px solid var(--vino);color:var(--vino);text-decoration:none;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;transition:background .3s,color .3s}
   .btn-noticias:hover{background:var(--vino);color:var(--crema)}
   @media(max-width:820px){#noticias .noticias-lista{grid-template-columns:1fr;gap:22px}.noticia-cuerpo{padding:20px 20px 22px}}
+  /* Menú hamburguesa hasta 1100px. Va al final para que gane a los estilos base de la barra */
+  @media(max-width:1100px){
+    .nav-links{position:fixed;top:100%;right:-100%;flex-direction:column;background:var(--vino-oscuro);width:72%;max-width:300px;height:100vh;padding:38px 28px;gap:24px;transition:right .45s var(--ease);align-items:flex-start}
+    .nav-links.open{right:0}
+    .burger{display:block}
+  }
 </style>
 </head>
 <body>
