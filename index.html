@@ -151,7 +151,7 @@
     animation:heroFade 1.2s var(--ease) .06s both}
   .hero .emblem .poster{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     transition:opacity .9s var(--ease)}
-  .hero .emblem .poster svg{width:44%;height:auto;animation:emblemFloat 6.5s ease-in-out 1.8s infinite}
+  .hero .emblem .poster img{width:100%;height:100%;display:block}
   .hero .emblem canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;display:none}
   .hero .emblem canvas.activo{display:block}
   @keyframes emblemFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
@@ -384,11 +384,7 @@
       <p class="invocacion">A∴L∴G∴D∴G∴A∴D∴U∴</p>
       <div class="emblem" id="emblema">
         <div class="poster">
-          <svg width="130" height="130" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-            <path d="M50 6 L92 64 L80 64 L50 22 L20 64 L8 64 Z" fill="#c9a227"/>
-            <path d="M50 94 L8 36 L20 36 L50 78 L80 36 L92 36 Z" fill="none" stroke="#c9a227" stroke-width="5"/>
-            <circle cx="50" cy="50" r="6" fill="#e6c65c"/>
-          </svg>
+          <img src="emblema-estatico.webp" alt="" width="520" height="520" decoding="async" fetchpriority="high">
         </div>
         <canvas id="emblema3d" aria-hidden="true"></canvas>
       </div>
