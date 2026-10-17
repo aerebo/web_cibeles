@@ -79,7 +79,6 @@
     <span class="over sans" id="t-over">Noticias</span>
     <h1 id="t-titulo">R∴L∴S∴ Cibeles 176 Vall∴ Lima</h1>
     <div class="rule"></div>
-    <p id="t-intro">Con nuestro V∴M∴ R∴H∴ Gilbert Chávez Ramos</p>
   </div>
 </section>
 
@@ -120,7 +119,7 @@
   fetch(CONTENT_URL).then(r => r.ok ? r.json() : null).then(d => {
     if (!d || !d.ok) throw new Error('sin datos');
     const T = d.textos || {};
-    [['t-over', 'noticias-01'], ['t-titulo', 'noticias-02'], ['t-intro', 'noticias-03']].forEach(([id, k]) => {
+    [['t-over', 'noticias-01'], ['t-titulo', 'noticias-02']].forEach(([id, k]) => {
       if (typeof T[k] === 'string' && T[k].trim()) document.getElementById(id).textContent = T[k];
     });
     const noticias = (Array.isArray(d.noticias) ? d.noticias : [])
